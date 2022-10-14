@@ -1,0 +1,1 @@
+g++ -o cubescpp ./src/main.cpp ./lib/glad/src/glad.c -lglfw
