@@ -1,35 +1,25 @@
 all: libs cubescpp
 
-# directorios
+# dirs
 HDIR    = src
 CPPDIR  = src
 ODIR    = obj
 
-MODULOS = window render
-#MODULOS = asignatura asistenciavivo clase claseestudiante ctrlasignatura ctrlclase ctrlmensaje 
-#MODULOS += ctrlreproduccion ctrlsubscripcion ctrlusuario dicta docente estudiante handlerasignaturas 
-#MODULOS += handlerusuarios mensaje monitoreo notificacion practico reloj srespuesta teorico usuario
-#MODULOS += dt/dtasignatura dt/dtasignaturaext dt/dtclase dt/dtdocente dt/dtestudiante dt/dtfecha 
-#MODULOS += dt/dtmensaje dt/dtnotificacion dt/dtpromasistencia
-#MODULOS += dt/dttiempoasignatura dt/dtusuario fabrica dt/dtpreview 
-
-# IMPORTANTE hay que poner como "modulos" todos los archivos de src a compilar
-
-# cadena de archivos, con directorio y extensión
-HS   = $(MODULOS:%=$(HDIR)/%.hpp)
-CPPS = $(MODULOS:%=$(CPPDIR)/%.cpp)
-OS   = $(MODULOS:%=$(ODIR)/%.o)
+# files with directory and extension
+HS = $(wildcard ./src/*.hpp)
+CPPS = $(HS:.hpp=.cpp)
+OS=$(patsubst %.hpp, %.o, $(patsubst ./src/%,./obj/%,$(HS)))
 
 MAIN=main
 BINARY=cubescpp
 
-# compilador
+# compiler
 CC = g++
-# opciones de compilación
+# compiler flags
 CCFLAGS = -Wall -Werror -O3 -I$(HDIR)
-# -DNDEBUG
-# se agrega esta opción para que las llamadas a assert no hagan nada.
+
 LIBRARIES = -lglfw
+# linker flags
 LDFLAGS = $(LIBRARIES) $(ODIR)/glad.o
 
 libs:
