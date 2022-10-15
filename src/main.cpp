@@ -2,18 +2,20 @@
 
 #include "window.hpp"
 #include "render.hpp"
+#include "player.hpp"
 
 int main() {
     // setup
     Window window = Window();
     Render render = Render();
+    Player player = Player();
 
     // render loop
     // ----
     while (!window.shouldClose()) {
         // process input
         // ----
-        window.processInput();
+        window.processInput(player);
 
 
         // update
@@ -26,8 +28,8 @@ int main() {
 
         // swap buffers and poll IO events (keys pressed/released, mouse moved etc)
         window.swapBuffers();
-        glfwPollEvents();
+        window.pollEvents();
     }
-
+    
     return EXIT_SUCCESS;
 }

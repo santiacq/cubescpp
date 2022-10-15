@@ -1,5 +1,6 @@
 #include "../lib/glad/include/glad/glad.h"
 #include <GLFW/glfw3.h>
+#include "player.hpp"
 
 class Window {
     private:
@@ -10,5 +11,5 @@ class Window {
         bool shouldClose();
         void swapBuffers();
         void pollEvents();
-        void processInput();
+        void processInput(Player &player);
 };

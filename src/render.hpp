@@ -1,5 +1,5 @@
 class Render {
     public:
-        //Render();
+        Render();
         void render();
 };

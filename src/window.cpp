@@ -1,5 +1,4 @@
 #include "window.hpp"
-
 #include <iostream>
 
 const unsigned int SCR_WIDTH = 800;
@@ -35,14 +34,6 @@ Window::Window() {
     }
     glfwMakeContextCurrent(windowPtr);
     glfwSetFramebufferSizeCallback(windowPtr, framebuffer_size_callback);
-
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        exit(EXIT_FAILURE);
-    }
 }
 
 Window::~Window() {
@@ -61,7 +52,21 @@ bool Window::shouldClose() {
     return glfwWindowShouldClose(windowPtr);
 }
 
-void Window::processInput() {
-    if(glfwGetKey(windowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+void Window::processInput(Player &player) {
+    if (glfwGetKey(windowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(windowPtr, true);
+
+    //float cameraSpeed = (float)(state.playerSpeed * state.delta);
+    if (glfwGetKey(windowPtr, GLFW_KEY_W) == GLFW_PRESS)
+        player.moveFront();
+    if (glfwGetKey(windowPtr, GLFW_KEY_S) == GLFW_PRESS)
+        player.moveBack();
+    if (glfwGetKey(windowPtr, GLFW_KEY_A) == GLFW_PRESS)
+        player.moveLeft();
+    if (glfwGetKey(windowPtr, GLFW_KEY_D) == GLFW_PRESS)
+        player.moveRight();
+    if (glfwGetKey(windowPtr, GLFW_KEY_SPACE) == GLFW_PRESS)
+        player.moveUp();
+    if (glfwGetKey(windowPtr, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        player.moveDown();
 }
