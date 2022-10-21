@@ -5,12 +5,14 @@
 #include <glm/trigonometric.hpp>
 #include <iostream>
 
-#define SPEED (float) 3.0
+#define SPEED (float) 0.5
 #define UP glm::vec3(0,1,0)
 
 Player::Player() {
-    this->pos = glm::vec3(3, 20, 3);
-    this->view = glm::vec3(1, -1, 1);
+    this->pos = glm::vec3(0, 10, 0);
+    this->view = glm::vec3(0.017182, -0.999848, 0);
+    this->pitch = -89;
+    this->yaw = 100.1;
 }
 void Player::moveFront(){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * SPEED;
@@ -31,6 +33,12 @@ void Player::moveDown(){
     this->pos -= UP * SPEED;
 }
 
+glm::vec3 Player::getPos() {
+    return pos;
+}
+glm::vec3 Player::getView() {
+    return view;
+}
 void Player::setPitch(float value) {
     pitch = value;
 }
@@ -46,5 +54,6 @@ float Player::getYaw() {
 void Player::updateView() { // update view vector based on pitch and yaw
     view.x = glm::cos(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
     view.y = glm::sin(glm::radians(pitch));
-    view.x = glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+    view.z = glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+    view = glm::normalize(view);
 }

@@ -1,9 +1,6 @@
 #include "window.hpp"
 #include <iostream>
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
 static void framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
@@ -71,7 +68,7 @@ Window::Window(Settings &settings, Player &player) {
 
     // glfw window creation
     // --------------------
-   windowPtr = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "cubescpp", NULL, NULL);
+   windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", NULL, NULL);
     if (windowPtr == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -79,6 +76,8 @@ Window::Window(Settings &settings, Player &player) {
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(windowPtr);
+    // capture mouse
+    glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
     // set initial attributes
     this->settings = &settings;

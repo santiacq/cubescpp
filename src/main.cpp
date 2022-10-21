@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 #include "window.hpp"
 #include "render.hpp"
@@ -9,8 +11,7 @@ int main() {
     Settings settings = Settings();
     Player player = Player();
     Window window = Window(settings, player); // create glfw window and configure callback functions
-    Render render = Render(); // load openGL with glad and configure openGL
-
+    Render render = Render(settings); // load openGL with glad and configure openGL
 
     // game loop
     // ---- ---- ----
@@ -26,7 +27,11 @@ int main() {
 
         // render
         // ---- ---- ----
-        render.render();
+        render.render(player);
+        std::cout << "Pos: " << glm::to_string(player.getPos()) << " ; View: " <<
+        glm::to_string(player.getView()) << " ; Pitch: "
+        <<  player.getPitch() << " ; Yaw: "
+        << player.getYaw() << std::endl;
 
         // swap buffers and poll IO events (keys pressed/released, mouse moved etc)
         window.swapBuffers();

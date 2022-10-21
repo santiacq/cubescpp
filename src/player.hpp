@@ -17,6 +17,8 @@ class Player {
         void moveUp();
         void moveDown();
         
+        glm::vec3 getPos();
+        glm::vec3 getView();
         void setPitch(float value);
         float getPitch();
         void setYaw(float value);
