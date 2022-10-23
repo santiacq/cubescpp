@@ -29,7 +29,7 @@ int Chunk::getChunkY() {
 
 void Chunk::updateMesh() { // recalculate mesh and update mesh attribute
     int triangles = 0;
-    // in the worst case, we'll need this amount of floats
+    // big array because in the worst case, we'll need this amount of floats
     // for each cube, there are six faces, with two triangles each, and 9 floats each triangle.
     float* tempVertices = new float[CHUNK_BLOCKS*6*2*9];
 
@@ -117,22 +117,18 @@ void Chunk::updateMesh() { // recalculate mesh and update mesh attribute
             }
         }
     }
-    //std::cout << "here 6" << std::endl;
-    //std::cout << "triangles: " << triangles << std::endl;
+    
+    // create a new array with buffers with the right size
     float* vertices = new float[triangles*9];
     for (int i = 0; i < triangles*9; i++) {
         vertices[i] = tempVertices[i];
     }
-    //std::cout << "2 first float: " << vertices[0] << std::endl;
+    // delete temporary big array
     delete[] tempVertices;
-    //std::cout << "2 first float: " << vertices[0] << std::endl;
+    // delete old mesh
     delete this->mesh;
+    // create new mesh with the new array
     this->mesh = new Mesh(vertices, triangles);
-    //std::cout <<  this->mesh.getVertices()[0]  << std::endl;
-    //std::cout << "test " << std::endl;
-    //std::cout << "8 first float: " << vertices[0] << std::endl;
-    //std::cout << "3 first float: " << this->getMesh().getVertices()[0] << std::endl;
-
 }
 
 Mesh* Chunk::getMesh() { // get last mesh

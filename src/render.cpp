@@ -30,10 +30,10 @@ Render::Render(Settings settings) {
 
     // build and compile shader program
     shader = Shader("shaders/testvert.glsl", "shaders/testfrag.glsl");
-    updateProjectionMatrix(settings);
+    
     // set projection matrix 
-
-
+    updateProjectionMatrix(settings);
+    
     // load texture atlas
 
 }
