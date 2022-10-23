@@ -13,6 +13,9 @@ int main() {
     Window window = Window(settings, player); // create glfw window and configure callback functions
     Render render = Render(settings); // load openGL with glad and configure openGL
 
+    Chunk chunk = Chunk(0,0);
+    //std::cout << "here 1" << std::endl;
+
     // game loop
     // ---- ---- ----
     while (!window.shouldClose()) {
@@ -27,7 +30,9 @@ int main() {
 
         // render
         // ---- ---- ----
-        render.render(player);
+        render.render(player, chunk);
+
+        // debug
         std::cout << "Pos: " << glm::to_string(player.getPos()) << " ; View: " <<
         glm::to_string(player.getView()) << " ; Pitch: "
         <<  player.getPitch() << " ; Yaw: "

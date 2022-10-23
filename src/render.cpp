@@ -44,7 +44,7 @@ void Render::updateProjectionMatrix(Settings settings) {
     shader.setFloatMatrix4("projection", (float*) &projection);
 }
 
-void Render::render(Player player) {
+void Render::render(Player player, Chunk &chunk) {
     // Clear color buffer and z buffer
     glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -52,20 +52,23 @@ void Render::render(Player player) {
     shader.use();
     glm::mat4 view = glm::lookAt(player.getPos(), player.getPos() + player.getView(), UP);
     shader.setFloatMatrix4("view", (float*) &view);
+    
     // Render world
-    float vertices[] = {
-        0.0f, 0.0f, 0.0f,
-        0.0f,  0.0f, 100.0f,
-        100.0f, 0.0f, 0.0f
-    };
+
+    // update chunk mesh, this should only be done if necesary (chunk updated)
+    chunk.updateMesh();
+    
+    // tell opengl the format of the vertex attributes being passed
     glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    shader.use();
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // pass the data to opengl
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, chunk.getMesh()->getTriangles() * 9 * sizeof(float), chunk.getMesh()->getVertices(), GL_DYNAMIC_DRAW);
+
+    //shader.use();
+    //glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+    glDrawArrays(GL_TRIANGLES, 0, chunk.getMesh()->getTriangles() * 3);
+    //std::cout << "here 7" << std::endl;
 }
