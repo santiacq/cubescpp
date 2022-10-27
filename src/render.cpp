@@ -35,7 +35,7 @@ Render::Render(Settings settings) {
     updateProjectionMatrix(settings);
     
     // load texture atlas
-
+    atlas = Atlas("textures/atlas.png", 8);
 }
 
 void Render::updateProjectionMatrix(Settings settings) {
@@ -56,16 +56,20 @@ void Render::render(Player player, Chunk &chunk) {
     // Render world
 
     // update chunk mesh, this should only be done if necesary (chunk updated)
-    chunk.updateMesh();
+    chunk.updateMesh(this->atlas);
     
     // tell opengl the format of the vertex attributes being passed
     glBindVertexArray(VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // texture coord attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // pass the data to opengl
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, chunk.getMesh()->getTriangles() * 9 * sizeof(float), chunk.getMesh()->getVertices(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, chunk.getMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), chunk.getMesh()->getVertices(), GL_DYNAMIC_DRAW);
 
-    glDrawArrays(GL_TRIANGLES, 0, chunk.getMesh()->getTriangles() * 3);
+    glDrawArrays(GL_TRIANGLES, 0, chunk.getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
 }

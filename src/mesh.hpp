@@ -4,12 +4,12 @@
 class Mesh {
     private:
         float* vertices;
-        int triangles;
+        unsigned int triangles;
     public:
         Mesh();
-        Mesh(float* vertices,int triangles);
+        Mesh(float* vertices, unsigned int triangles);
         ~Mesh();
         float* getVertices();
-        int getTriangles();
+        unsigned int getTriangles();
 };
 #endif

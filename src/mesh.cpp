@@ -3,7 +3,7 @@
 
 Mesh::Mesh() {}
 
-Mesh::Mesh(float* vertices, int triangles) {
+Mesh::Mesh(float* vertices, unsigned int triangles) {
     this->vertices = vertices;
     this->triangles = triangles;
 }
@@ -15,6 +15,6 @@ Mesh::~Mesh() {
 float* Mesh::getVertices() {
     return vertices;
 }
-int Mesh::getTriangles() {
+unsigned int Mesh::getTriangles() {
     return triangles;
 }

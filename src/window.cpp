@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include <cmath>
 #include <iostream>
 
 static void framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height)
@@ -42,7 +43,7 @@ static void mouse_callback(GLFWwindow* windowPtr, double xposIn, double yposIn) 
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    window->getPlayer()->setYaw(window->getPlayer()->getYaw() + xoffset);
+    window->getPlayer()->setYaw(fmod((window->getPlayer()->getYaw() + xoffset), 360));
     window->getPlayer()->setPitch(window->getPlayer()->getPitch() + yoffset);
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
