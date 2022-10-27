@@ -11,6 +11,10 @@ Chunk::Chunk(int chunkX, int chunkY) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 if (y < 4) {
+                    blocks[x][y][z] = Block(Stone);
+                } else if (y < 6){
+                    blocks[x][y][z] = Block(Dirt);
+                } else if (y < 7){
                     blocks[x][y][z] = Block(Grass);
                 } else {
                     blocks[x][y][z] = Block(Air);
