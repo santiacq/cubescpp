@@ -57,3 +57,18 @@ void Player::updateView() { // update view vector based on pitch and yaw
     view.z = glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
     view = glm::normalize(view);
 }
+
+int Player::getChunkX() {
+    if (pos.x >= 0) {
+        return pos.x / 16;
+    } else {
+        return pos.x / 16 - 1;
+    }
+}
+int Player::getChunkZ() {
+    if (pos.z >= 0) {
+        return pos.z / 16;
+    } else {
+        return pos.z / 16 - 1;
+    }
+}

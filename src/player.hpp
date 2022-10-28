@@ -24,6 +24,8 @@ class Player {
         void setYaw(float value);
         float getYaw();
         void updateView(); // update view vector based on pitch and yaw
+        int getChunkX();
+        int getChunkZ();
 };
 
 #endif

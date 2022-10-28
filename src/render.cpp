@@ -56,9 +56,13 @@ void Render::render(Player player, World &world) {
     // Render world
 
     // update chunk mesh, this should only be done if necesary (chunk updated)
-    Chunk* chunk = world.getChunk(0, 0);
+    Chunk* chunk = world.getChunk(player.getChunkX(), player.getChunkZ());
     chunk->updateMesh(this->atlas);
-    
+
+    // update model matrix (which moves each chunk)
+    glm::mat4 model = glm::translate(glm::identity<glm::mat4>(), glm::vec3(player.getChunkX()*16,0,player.getChunkZ()*16));
+    shader.setFloatMatrix4("model", (float*) &model);
+
     // tell opengl the format of the vertex attributes being passed
     glBindVertexArray(VAO);
     // position attribute
