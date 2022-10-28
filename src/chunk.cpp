@@ -3,9 +3,9 @@
 #include <cstddef>
 #include <iostream>
 
-Chunk::Chunk(int chunkX, int chunkY) {
+Chunk::Chunk(int chunkX, int chunkZ) {
     this->chunkX = chunkX;
-    this->chunkY = chunkY;
+    this->chunkZ = chunkZ;
     this->mesh = NULL;
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
@@ -28,8 +28,8 @@ int Chunk::getChunkX() {
     return chunkX;
 }
 
-int Chunk::getChunkY() {
-    return chunkY;
+int Chunk::getChunkZ() {
+    return chunkZ;
 }
 
 void Chunk::updateMesh(Atlas a) { // recalculate mesh and update mesh attribute

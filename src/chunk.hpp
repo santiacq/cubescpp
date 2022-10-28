@@ -10,13 +10,13 @@
 
 class Chunk {
     private:
-        int chunkX, chunkY;
+        int chunkX, chunkZ;
         Block blocks[CHUNK_SIZE][WORLD_HEIGHT][CHUNK_SIZE]; // x, y, z
         Mesh* mesh;
     public:
-        Chunk(int x, int y);
+        Chunk(int chunkX, int chunkZ);
         int getChunkX();
-        int getChunkY();
+        int getChunkZ();
         void updateMesh(Atlas a); // recalculate mesh and update mesh attribute
         Mesh* getMesh(); // get last mesh
 };

@@ -21,8 +21,8 @@ Render::Render(Settings settings) {
     // configure z-buffer for opengl global state
     glEnable(GL_DEPTH_TEST);
     // enable backface culling
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     // set up vertex buffer object and vertex array object
     glGenVertexArrays(1, &VAO);
@@ -44,7 +44,7 @@ void Render::updateProjectionMatrix(Settings settings) {
     shader.setFloatMatrix4("projection", (float*) &projection);
 }
 
-void Render::render(Player player, Chunk &chunk) {
+void Render::render(Player player, World &world) {
     // Clear color buffer and z buffer
     glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -56,7 +56,8 @@ void Render::render(Player player, Chunk &chunk) {
     // Render world
 
     // update chunk mesh, this should only be done if necesary (chunk updated)
-    chunk.updateMesh(this->atlas);
+    Chunk* chunk = world.getChunk(0, 0);
+    chunk->updateMesh(this->atlas);
     
     // tell opengl the format of the vertex attributes being passed
     glBindVertexArray(VAO);
@@ -69,7 +70,7 @@ void Render::render(Player player, Chunk &chunk) {
 
     // pass the data to opengl
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, chunk.getMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), chunk.getMesh()->getVertices(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, chunk->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), chunk->getMesh()->getVertices(), GL_DYNAMIC_DRAW);
 
-    glDrawArrays(GL_TRIANGLES, 0, chunk.getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
+    glDrawArrays(GL_TRIANGLES, 0, chunk->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
 }

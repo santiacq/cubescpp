@@ -13,8 +13,7 @@ int main() {
     Window window = Window(settings, player); // create glfw window and configure callback functions
     Render render = Render(settings); // load openGL with glad and configure openGL
 
-    Chunk chunk = Chunk(0,0);
-    //std::cout << "here 1" << std::endl;
+    World world = World();
 
     // game loop
     // ---- ---- ----
@@ -30,7 +29,7 @@ int main() {
 
         // render
         // ---- ---- ----
-        render.render(player, chunk);
+        render.render(player, world);
 
         // debug
         std::cout << "Pos: " << glm::to_string(player.getPos()) << " ; View: " <<

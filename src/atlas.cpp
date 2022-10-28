@@ -79,10 +79,13 @@ Atlas::Atlas(const char* texturePath, unsigned int size){
     glBindTexture(GL_TEXTURE_2D, texture);
     
     // configure opengl to draw the texture correctly
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    
     // GL_RGBA may need to be replaced with GL_RGB in certain textures
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    // generate mipmap
     //glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(data);
