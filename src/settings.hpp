@@ -6,6 +6,7 @@ class Settings {
         unsigned int screenWidth, screenHeight;
         float nearViewDistance, farViewDistance;
         float fov;
+        unsigned int renderDistance; // in chunks
         bool wireframe;
     public:
         Settings();
@@ -20,6 +21,8 @@ class Settings {
         float getFarViewDistance();
         void setFov(float value);
         float getFov();
+        void setRenderDistance(unsigned int value);
+        unsigned int getRenderDistance();
         void setWireframe(bool value);
         bool getWireframe();
 };

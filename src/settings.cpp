@@ -2,11 +2,12 @@
 
 Settings::Settings() {
     // default values
-    screenWidth = 800;
-    screenHeight = 600;
+    screenWidth = 1280;
+    screenHeight = 720;
     nearViewDistance = 0.1;
     farViewDistance = 1000;
-    fov = 45;  
+    fov = 45;
+    renderDistance = 8;
     wireframe = false;
 }
 
@@ -39,6 +40,12 @@ void Settings::setFov(float value) {
 }
 float Settings::getFov() {
     return fov;
+}
+void Settings::setRenderDistance(unsigned int value) {
+    renderDistance = value;
+}
+unsigned int Settings::getRenderDistance() {
+    return renderDistance;
 }
 void Settings::setWireframe(bool value) {
     wireframe = value;

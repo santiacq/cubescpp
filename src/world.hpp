@@ -1,3 +1,6 @@
+#ifndef WORLD_HPP
+#define WORLD_HPP
+
 #include <map>
 #include "chunk.hpp"
 
@@ -10,3 +13,5 @@ class World {
         ~World();
         Chunk* getChunk(int chunkX, int chunkZ);
 };
+
+#endif

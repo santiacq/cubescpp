@@ -11,6 +11,9 @@ World::World() {}
 
 World::~World() {
     // free memory reserved while updating chunks
+    for (auto it = this->chunks.begin(); it != this->chunks.end(); it++) {
+        delete it->second;
+    }
 }
 
 Chunk* World::getChunk(int chunkX, int chunkZ) {

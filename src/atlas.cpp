@@ -32,7 +32,7 @@
 }
 
 unsigned int Atlas::atlasPosition(Block b, Ubication u) {
-    unsigned int atlasPosition;
+    unsigned int atlasPosition = 0;
     switch (b.getType()) {
         case Grass:
             SWITCH(GRASS);

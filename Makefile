@@ -16,7 +16,7 @@ BINARY=cubescpp
 # compiler
 CC = g++
 # compiler flags
-CCFLAGS = -Wall -Werror -ggdb -I$(HDIR)
+CCFLAGS = -Wall -Werror -ggdb -g -O1 -I$(HDIR)
 
 LIBRARIES = -lglfw
 # linker flags
