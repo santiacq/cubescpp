@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "player.hpp"
 #include "settings.hpp"
+#include "clock.hpp"
 
 class Window {
     private:
@@ -18,7 +19,7 @@ class Window {
         bool shouldClose();
         void swapBuffers();
         void pollEvents();
-        void processInput(Player &player);
+        void processInput(Player &player, Clock clock);
         // setters and getters for the attributes used in callback functions
         Settings* getSettings();
         Player* getPlayer();

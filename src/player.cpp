@@ -13,24 +13,26 @@ Player::Player() {
     this->view = glm::vec3(0.017182, -0.999848, 0);
     this->pitch = -89;
     this->yaw = 100.1;
+    
+    this->speed = 8;
 }
-void Player::moveFront(){
-    this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * SPEED;
+void Player::moveFront(float moveDistance){
+    this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
 }
-void Player::moveBack(){
-    this->pos += glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * SPEED;
+void Player::moveBack(float moveDistance){
+    this->pos += glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
 }
-void Player::moveLeft(){
-    this->pos -= glm::normalize(glm::cross(this->view, UP)) * SPEED;
+void Player::moveLeft(float moveDistance){
+    this->pos -= glm::normalize(glm::cross(this->view, UP)) * moveDistance;
 }
-void Player::moveRight(){
-    this->pos += glm::normalize(glm::cross(this->view, UP)) * SPEED;
+void Player::moveRight(float moveDistance){
+    this->pos += glm::normalize(glm::cross(this->view, UP)) * moveDistance;
 }
-void Player::moveUp(){
-    this->pos += UP * SPEED;
+void Player::moveUp(float moveDistance){
+    this->pos += UP * moveDistance;
 }
-void Player::moveDown(){
-    this->pos -= UP * SPEED;
+void Player::moveDown(float moveDistance){
+    this->pos -= UP * moveDistance;
 }
 
 glm::vec3 Player::getPos() {
@@ -71,4 +73,8 @@ int Player::getChunkZ() {
     } else {
         return pos.z / 16 - 1;
     }
+}
+
+float Player::getSpeed() {
+    return speed;
 }

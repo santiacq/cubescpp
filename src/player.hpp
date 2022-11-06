@@ -8,14 +8,15 @@ class Player {
         glm::vec3 pos; // player position
         float pitch, yaw; // angles corresponding to the view direction
         glm::vec3 view; // view direction
+        float speed;
     public:
         Player();
-        void moveFront();
-        void moveBack();
-        void moveLeft();
-        void moveRight();
-        void moveUp();
-        void moveDown();
+        void moveFront(float moveDistance);
+        void moveBack(float moveDistance);
+        void moveLeft(float moveDistance);
+        void moveRight(float moveDistance);
+        void moveUp(float moveDistance);
+        void moveDown(float moveDistance);
         
         glm::vec3 getPos();
         glm::vec3 getView();
@@ -26,6 +27,7 @@ class Player {
         void updateView(); // update view vector based on pitch and yaw
         int getChunkX();
         int getChunkZ();
+        float getSpeed();
 };
 
 #endif

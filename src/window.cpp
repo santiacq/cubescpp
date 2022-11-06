@@ -77,6 +77,9 @@ Window::Window(Settings &settings, Player &player) {
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(windowPtr);
+    
+    // remove fps cap, comment this line to set 60 fps cap
+    glfwSwapInterval(0);
     // capture mouse
     glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
@@ -110,23 +113,23 @@ bool Window::shouldClose() {
     return glfwWindowShouldClose(windowPtr);
 }
 
-void Window::processInput(Player &player) {
+void Window::processInput(Player &player, Clock clock) {
     if (glfwGetKey(windowPtr, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(windowPtr, true);
 
-    //float cameraSpeed = (float)(state.playerSpeed * state.delta);
+    float moveDistance = player.getSpeed() * clock.getDelta(); // the distance player will move in this frame
     if (glfwGetKey(windowPtr, GLFW_KEY_W) == GLFW_PRESS)
-        player.moveFront();
+        player.moveFront(moveDistance);
     if (glfwGetKey(windowPtr, GLFW_KEY_S) == GLFW_PRESS)
-        player.moveBack();
+        player.moveBack(moveDistance);
     if (glfwGetKey(windowPtr, GLFW_KEY_A) == GLFW_PRESS)
-        player.moveLeft();
+        player.moveLeft(moveDistance);
     if (glfwGetKey(windowPtr, GLFW_KEY_D) == GLFW_PRESS)
-        player.moveRight();
+        player.moveRight(moveDistance);
     if (glfwGetKey(windowPtr, GLFW_KEY_SPACE) == GLFW_PRESS)
-        player.moveUp();
+        player.moveUp(moveDistance);
     if (glfwGetKey(windowPtr, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        player.moveDown();
+        player.moveDown(moveDistance);
 }
 
 // setters and getters for the attributes used in callback functions
