@@ -14,7 +14,7 @@ Player::Player() {
     this->pitch = -89;
     this->yaw = 100.1;
     
-    this->speed = 8;
+    this->speed = 10;
 }
 void Player::moveFront(float moveDistance){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
