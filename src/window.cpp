@@ -55,6 +55,11 @@ static void mouse_callback(GLFWwindow* windowPtr, double xposIn, double yposIn) 
     window->getPlayer()->updateView();
 }
 
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+        std::cout << "click" << std::endl;
+}
+
 Window::Window(Settings &settings, Player &player) {
     // glfw: initialize and configure
     // ------------------------------
@@ -95,6 +100,7 @@ Window::Window(Settings &settings, Player &player) {
     glfwSetFramebufferSizeCallback(windowPtr, framebuffer_size_callback);
     glfwSetCursorPosCallback(windowPtr, mouse_callback);
     glfwSetKeyCallback(windowPtr, keyboard_callback);
+    glfwSetMouseButtonCallback(windowPtr, mouse_button_callback);
 }
 
 Window::~Window() {

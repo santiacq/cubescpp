@@ -23,7 +23,7 @@ int main() {
         // ---- ---- ----
         clock.tick();
 
-        std::cout << "FPS: " << 1/clock.getDelta() << std::endl;
+        //std::cout << "FPS: " << 1/clock.getDelta() << std::endl;
 
         // process input
         // ---- ---- ----
@@ -39,10 +39,10 @@ int main() {
         render.render(player, world, settings);
 
         // debug
-        /*std::cout << "Pos: " << glm::to_string(player.getPos()) << " ; View: " <<
+        std::cout << "Pos: " << glm::to_string(player.getPos()) << " ; View: " <<
         glm::to_string(player.getView()) << " ; Pitch: " <<  player.getPitch() << " ; Yaw: "
         << player.getYaw() << " ; chunkX: " << player.getChunkX()  << " ; chunkZ: " << player.getChunkZ() << std::endl;
-        */
+        
 
         // swap buffers and poll IO events (keys pressed/released, mouse moved etc)
         window.swapBuffers();
