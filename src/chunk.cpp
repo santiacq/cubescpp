@@ -76,12 +76,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     // only render this face if it isn't facing a solid block
                     if ((z == 0 && neighborWest->getBlock(x, y, CHUNK_SIZE - 1).getType() == Air) || (z != 0 && blocks[x][y][z - 1].getType() == Air)) {
                         float square1[] = {
-                            1.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side) + a.getD(),
-                            1.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side)           ,
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           , a.getV(b, Side)           ,
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           , a.getV(b, Side)           ,
-                            0.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Side)           , a.getV(b, Side) + a.getD(),
-                            1.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side) + a.getD(),
+                            0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side) + a.getD(),
+                            0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side)           ,
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           , a.getV(b, Side)           ,
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           , a.getV(b, Side)           ,
+                            -0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side)           , a.getV(b, Side) + a.getD(),
+                            0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side) + a.getD(),
                         };
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square1[i];  
@@ -90,12 +90,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     }
                     if ((z == (CHUNK_SIZE - 1) && neighborEast->getBlock(x, y, 0).getType() == Air) || (z != (CHUNK_SIZE - 1) && blocks[x][y][z + 1].getType() == Air)) {
                         float square2[] = {
-                            0.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
-                            1.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
-                            0.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
-                            0.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            -0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            -0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
+                            -0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
                         };
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square2[i];  
@@ -104,12 +104,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     }
                     if ((x == 0 && neighborSouth->getBlock(CHUNK_SIZE - 1, y, z).getType() == Air) || (x != 0 && blocks[x - 1][y][z].getType() == Air)) {
                         float square3[] = {
-                            0.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
-                            0.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
-                            0.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
-                            0.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            -0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            -0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            -0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
+                            -0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
                         };
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square3[i];  
@@ -118,12 +118,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     }
                     if ((x == (CHUNK_SIZE - 1) && neighborNorth->getBlock(0, y, z).getType() == Air) || (x != (CHUNK_SIZE - 1) && blocks[x + 1][y][z].getType() == Air)) {
                         float square4[] = {
-                            1.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
-                            1.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
-                            1.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
-                            1.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
+                            0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+                            0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
+                            0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
                         };
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square4[i];  
@@ -132,12 +132,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     }
                     if (y == 0 || blocks[x][y - 1][z].getType() == Air) {
                         float square5[] = {
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Bottom)            , a.getV(b, Bottom) + a.getD(),
-                            1.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom) + a.getD(),
-                            1.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom)           ,
-                            1.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom)           ,
-                            0.0f + x, 0.0f + y, 1.0f + z, a.getU(b, Bottom)            , a.getV(b, Bottom)           ,
-                            0.0f + x, 0.0f + y, 0.0f + z, a.getU(b, Bottom)            , a.getV(b, Bottom) + a.getD(),
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Bottom)            , a.getV(b, Bottom) + a.getD(),
+                            0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom) + a.getD(),
+                            0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom)           ,
+                            0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom)           ,
+                            -0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Bottom)            , a.getV(b, Bottom)           ,
+                            -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Bottom)            , a.getV(b, Bottom) + a.getD(),
                         };  
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square5[i];  
@@ -146,12 +146,12 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
                     }
                     if (y == (WORLD_HEIGHT - 1) || blocks[x][y + 1][z].getType() == Air) {
                         float square6[] = {
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top)           ,
-                            1.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top) + a.getD(),
-                            0.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Top)           , a.getV(b, Top) + a.getD(),
-                            0.0f + x, 1.0f + y, 0.0f + z, a.getU(b, Top)           , a.getV(b, Top) + a.getD(),
-                            0.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Top)           , a.getV(b, Top)           ,
-                            1.0f + x, 1.0f + y, 1.0f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top)           ,
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top)           ,
+                            0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top) + a.getD(),
+                            -0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Top)           , a.getV(b, Top) + a.getD(),
+                            -0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Top)           , a.getV(b, Top) + a.getD(),
+                            -0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Top)           , a.getV(b, Top)           ,
+                            0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top)           ,
                         };
                         for (unsigned int i = 0; i < 2*FLOATS_PER_TRIANGLE; i++) {
                             tempVertices[triangles*FLOATS_PER_TRIANGLE + i] = square6[i];  
