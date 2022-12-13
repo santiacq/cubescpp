@@ -25,6 +25,7 @@ class Window {
         // setters and getters for the attributes used in callback functions
         Settings* getSettings();
         Player* getPlayer();
+        World* getWorld();
         void setLastX(float value);
         float getLastX();
         void setLastY(float value);

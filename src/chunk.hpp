@@ -23,14 +23,16 @@ class Chunk {
         Chunk* neighborWest; // neighbor in the direction in which z decreases
         Chunk* neighborEast; // neighbor in the direction in which z increases
         void updateNeighbors(World &world);
-        Block updateBlock(int x, int y, int z, int chunkX, int chunkZ); // generate block in that coordinates
+        Block generateBlock(int x, int y, int z, int chunkX, int chunkZ); // generate block that goes in that coordinates
     public:
         Chunk(int chunkX, int chunkZ);
         int getChunkX();
         int getChunkZ();
         void updateMesh(Atlas a, World &world); // recalculate mesh and update mesh attribute
+        bool isMeshOutdated;
         Mesh* getMesh(); // get last mesh
         Block getBlock(unsigned int x, unsigned int y, unsigned int z);
+        void updateBlock(int x, int y, int z, Block block);
 };
 
 #endif

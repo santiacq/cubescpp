@@ -7,11 +7,11 @@
 
 #include "chunk.hpp" // chunk size is needed to calculate current chunk
 
-#define SPEED (float) 5
+#define SPEED (float) 2.5
 #define UP glm::vec3(0,1,0)
 
 Player::Player() {
-    this->pos = glm::vec3(0, 10, 0);
+    this->pos = glm::vec3(0, 20, 0);
     this->view = glm::vec3(0.017182, -0.999848, 0);
     this->pitch = -89;
     this->yaw = 100.1;

@@ -5,7 +5,12 @@
 #include <math.h>
 #include "world.hpp"
 
-Block Chunk::updateBlock(int x, int y, int z, int chunkX, int chunkZ) {
+void Chunk::updateBlock(int x, int y, int z, Block block) {
+    this->blocks[x][y][z] = block;
+    this->isMeshOutdated = true;
+}
+
+Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ) {
     float frequency = 0.2;
     float amplitude = 4;
     int surfaceY = 10 + sin((x + chunkX*16)*frequency)*amplitude + sin((z + chunkZ*16)*frequency)*amplitude;
@@ -30,7 +35,7 @@ Chunk::Chunk(int chunkX, int chunkZ) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                blocks[x][y][z] = updateBlock(x, y, z, chunkX, chunkZ);       
+                blocks[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ);       
             }
         }
     }
@@ -174,6 +179,7 @@ void Chunk::updateMesh(Atlas a, World &world) { // recalculate mesh and update m
     delete this->mesh;
     // create new mesh with the new array
     this->mesh = new Mesh(vertices, triangles);
+    this->isMeshOutdated = false;
 }
 
 Mesh* Chunk::getMesh() { // get last mesh

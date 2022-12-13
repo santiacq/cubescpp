@@ -80,7 +80,7 @@ void Render::render(Player player, World &world, Settings settings) {
 
     for (int i = 0; i < (int) visibleChunks.size(); i++) {
         // update chunk mesh, this should only be done if necesary (chunk updated)
-        if (visibleChunks[i]->getMesh() == NULL) {
+        if (visibleChunks[i]->getMesh() == NULL || visibleChunks[i]->isMeshOutdated) {
             visibleChunks[i]->updateMesh(this->atlas, world);
         }
 

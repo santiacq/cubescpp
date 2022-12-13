@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "chunk.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -55,9 +56,21 @@ static void mouse_callback(GLFWwindow* windowPtr, double xposIn, double yposIn) 
     window->getPlayer()->updateView();
 }
 
-static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-        std::cout << "click" << std::endl;
+static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
+    Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
+    
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        // std::cout << "click" << std::endl;
+        
+        // break block below player
+        // calculate broken block coordinates
+        unsigned int updatedX = (int) (round(window->getPlayer()->getPos().x) - (window->getPlayer()->getChunkX()*CHUNK_SIZE));
+        unsigned int updatedY = (int) window->getPlayer()->getPos().y - 2;
+        unsigned int updatedZ = (int) (round(window->getPlayer()->getPos().z) - (window->getPlayer()->getChunkZ()*CHUNK_SIZE));
+
+        Chunk* updatedChunk = window->getWorld()->getChunk(window->getPlayer()->getChunkX(), window->getPlayer()->getChunkZ());
+        updatedChunk->updateBlock(updatedX, updatedY, updatedZ, Air);
+    }
 }
 
 Window::Window(Settings &settings, Player &player, World &world) {
@@ -145,6 +158,9 @@ Settings* Window::getSettings() {
 }
 Player* Window::getPlayer() {
     return player;
+}
+World* Window::getWorld() {
+    return world;
 }
 void Window::setLastX(float value) {
     lastX = value;
