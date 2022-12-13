@@ -5,7 +5,9 @@
 #include <glm/trigonometric.hpp>
 #include <iostream>
 
-#define SPEED (float) 0.5
+#include "chunk.hpp" // chunk size is needed to calculate current chunk
+
+#define SPEED (float) 5
 #define UP glm::vec3(0,1,0)
 
 Player::Player() {
@@ -14,7 +16,7 @@ Player::Player() {
     this->pitch = -89;
     this->yaw = 100.1;
     
-    this->speed = 10;
+    this->speed = SPEED;
 }
 void Player::moveFront(float moveDistance){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
@@ -61,17 +63,17 @@ void Player::updateView() { // update view vector based on pitch and yaw
 }
 
 int Player::getChunkX() {
-    if (pos.x >= 0) {
-        return pos.x / 16;
+    if (pos.x >= -0.5) {
+        return (pos.x + 0.5) / 16;
     } else {
-        return pos.x / 16 - 1;
+        return ((pos.x + 0.5) / 16) - 1;
     }
 }
 int Player::getChunkZ() {
-    if (pos.z >= 0) {
-        return pos.z / 16;
+    if (pos.z >= -0.5) {
+        return (pos.z + 0.5) / 16;
     } else {
-        return pos.z / 16 - 1;
+        return ((pos.z + 0.5) / 16) - 1;
     }
 }
 

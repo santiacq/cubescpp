@@ -60,7 +60,7 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action, in
         std::cout << "click" << std::endl;
 }
 
-Window::Window(Settings &settings, Player &player) {
+Window::Window(Settings &settings, Player &player, World &world) {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -91,6 +91,7 @@ Window::Window(Settings &settings, Player &player) {
     // set initial attributes
     this->settings = &settings;
     this->player = &player;
+    this->world = &world;
     firstMouse = true;
 
     // set glfw user pointer

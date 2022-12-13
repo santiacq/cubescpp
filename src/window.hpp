@@ -3,6 +3,7 @@
 #include "player.hpp"
 #include "settings.hpp"
 #include "clock.hpp"
+#include "world.hpp"
 
 class Window {
     private:
@@ -10,11 +11,12 @@ class Window {
         // attributes used in callback functions
         Settings* settings;
         Player* player;
+        World* world;
         float lastX;
         float lastY;
         bool firstMouse;
     public:
-        Window(Settings &settings, Player &player);
+        Window(Settings &settings, Player &player, World &world);
         ~Window();
         bool shouldClose();
         void swapBuffers();
