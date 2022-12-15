@@ -1,6 +1,7 @@
 #include "window.hpp"
 #include "chunk.hpp"
 #include <cmath>
+#include <glm/ext/vector_float3.hpp>
 #include <iostream>
 
 static void framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height)
@@ -56,20 +57,83 @@ static void mouse_callback(GLFWwindow* windowPtr, double xposIn, double yposIn) 
     window->getPlayer()->updateView();
 }
 
+static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0.
+    return (x > 0) - (x < 0);
+}
+
+static float calculateTMax(float rayOrigin, float rayDirection) {
+    if (rayDirection < 0) {
+        return calculateTMax(-rayOrigin, -rayDirection);
+    } else {
+        rayOrigin = rayOrigin - (int) rayOrigin;
+        return (1 - rayOrigin) / rayDirection;
+    }
+}
+
 static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
     Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
     
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // std::cout << "click" << std::endl;
-        
-        // break block below player
-        // calculate broken block coordinates
-        unsigned int updatedX = (int) (round(window->getPlayer()->getPos().x) - (window->getPlayer()->getChunkX()*CHUNK_SIZE));
-        unsigned int updatedY = (int) window->getPlayer()->getPos().y - 2;
-        unsigned int updatedZ = (int) (round(window->getPlayer()->getPos().z) - (window->getPlayer()->getChunkZ()*CHUNK_SIZE));
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {      
+        // break a block
+        /* first we calculate the coordinates of the block that will be broken. we call these updatedX, updatedY and updatedZ.
+          this is done using ray casting. the algorithm is based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" 
+          from John Amanatides and Andrew Woo
+        */
+        Player* player = window->getPlayer();
+        // calculate initial variables
+        unsigned int iterX = (int) (round(player->getPos().x) - (player->getChunkX()*CHUNK_SIZE));
+        unsigned int iterY = (int) player->getPos().y;
+        unsigned int iterZ = (int) (round(player->getPos().z) - (player->getChunkZ()*CHUNK_SIZE));
 
-        Chunk* updatedChunk = window->getWorld()->getChunk(window->getPlayer()->getChunkX(), window->getPlayer()->getChunkZ());
-        updatedChunk->updateBlock(updatedX, updatedY, updatedZ, Air);
+        int stepX = sign(player->getView().x);
+        int stepY = sign(player->getView().y);
+        int stepZ = sign(player->getView().z);
+
+        float tMaxX = calculateTMax(player->getPos().x, player->getView().x);
+        float tMaxY = calculateTMax(player->getPos().y, player->getView().y);
+        float tMaxZ = calculateTMax(player->getPos().z, player->getView().z);
+
+        float tDeltaX = stepX / player->getView().x;
+        float tDeltaY = stepY / player->getView().y;
+        float tDeltaZ = stepZ / player->getView().z;
+
+        bool found = false;
+        float distanceLimit = 5;
+        Chunk* updatedChunk = window->getWorld()->getChunk(player->getChunkX(), player->getChunkZ());
+
+        while (!found && (tMaxX < distanceLimit || tMaxY < distanceLimit || tMaxZ < distanceLimit)) {
+            if (tMaxX < tMaxY) {
+                if (tMaxX < tMaxZ) {
+                    iterX += stepX;
+                    tMaxX += tDeltaX;
+                } else {
+                    iterZ += stepZ;
+                    tMaxZ += tDeltaZ;
+                }
+            } else {
+                if (tMaxY < tMaxZ) {
+                    iterY += stepY;
+                    tMaxY += tDeltaY;
+                } else {
+                    iterZ += stepZ;
+                    tMaxZ += tDeltaZ;
+                }
+            }
+            if (updatedChunk->getBlock(iterX, iterY, iterZ).getType() != Air) {
+                found = true;
+            } 
+        }
+
+        if (found) {
+            updatedChunk->updateBlock(iterX, iterY, iterZ, Air);
+        }
+
+        /*unsigned int updatedX = (int) (round(player->getPos().x) - (player->getChunkX()*CHUNK_SIZE));
+        unsigned int updatedY = (int) player->getPos().y - 2;
+        unsigned int updatedZ = (int) (round(player->getPos().z) - (player->getChunkZ()*CHUNK_SIZE)); */
+
+        //Chunk* updatedChunk = window->getWorld()->getChunk(player->getChunkX(), player->getChunkZ());
+        //updatedChunk->updateBlock(updatedX, updatedY, updatedZ, Air);
     }
 }
 

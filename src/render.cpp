@@ -47,8 +47,8 @@ void Render::updateProjectionMatrix(Settings settings) {
 // frustum culling / flood
 std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settings settings) {
     std::vector<Chunk*> visibleChunks;
-    visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ()));
-    /*visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ()));
+    /*visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ()));
+    visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ()));
     visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ() + 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ()));
     visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ() - 1));
@@ -56,11 +56,11 @@ std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settin
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() + 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ() - 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() - 1));*/
-    /*for (int x = -3; x <= 3; x++) {
+    for (int x = -3; x <= 3; x++) {
         for (int z = -3; z <= 3; z++) {
             visibleChunks.push_back(world.getChunk(player.getChunkX() + x, player.getChunkZ() + z));
         }
-    } */
+    }
     return visibleChunks;
 }
 
