@@ -29,7 +29,8 @@ Render::Render(Settings settings) {
     glGenBuffers(1, &VBO);
 
     // build and compile shader program
-    shader = Shader("shaders/testvert.glsl", "shaders/testfrag.glsl");
+    chunkShader = Shader("shaders/chunkvert.glsl", "shaders/chunkfrag.glsl");
+    GUIShader = Shader("shaders/guivert.glsl", "shaders/guifrag.glsl");
     
     // set projection matrix 
     updateProjectionMatrix(settings);
@@ -39,9 +40,9 @@ Render::Render(Settings settings) {
 }
 
 void Render::updateProjectionMatrix(Settings settings) {
-    shader.use();
+    chunkShader.use();
     this->projection = glm::perspective(settings.getFov(), (float) settings.getScreenWidth() / (float) settings.getScreenHeight(), settings.getNearViewDistance(), settings.getFarViewDistance());
-    shader.setFloatMatrix4("projection", (float*) &projection);
+    chunkShader.setFloatMatrix4("projection", (float*) &projection);
 }
 
 // frustum culling / flood
@@ -69,9 +70,9 @@ void Render::render(Player player, World &world, Settings settings) {
     glClearColor(0.1f, 0.8f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Update view matrix
-    shader.use();
+    chunkShader.use();
     this->view = glm::lookAt(player.getPos(), player.getPos() + player.getView(), UP);
-    shader.setFloatMatrix4("view", (float*) &view);
+    chunkShader.setFloatMatrix4("view", (float*) &view);
     
     // Render world
 
@@ -86,7 +87,7 @@ void Render::render(Player player, World &world, Settings settings) {
 
         // update model matrix (which moves each chunk)
         glm::mat4 model = glm::translate(glm::identity<glm::mat4>(), glm::vec3(visibleChunks[i]->getChunkX()*16,0,visibleChunks[i]->getChunkZ()*16));
-        shader.setFloatMatrix4("model", (float*) &model);
+        chunkShader.setFloatMatrix4("model", (float*) &model);
 
         // tell opengl the format of the vertex attributes being passed
         glBindVertexArray(VAO);
@@ -100,8 +101,31 @@ void Render::render(Player player, World &world, Settings settings) {
         // pass the data to opengl
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getMesh()->getVertices(), GL_DYNAMIC_DRAW);
-
+        // draw the blocks
         glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
     }
     
+    // Render GUI
+    GUIShader.use();
+    glDisable(GL_DEPTH_TEST);
+
+    float vertices[] = {
+        -0.05f, -0.05f, 0.0f, // left  
+         0.05f, -0.05f, 0.0f, // right 
+         0.0f,  0.05f, 0.0f  // top   
+    }; 
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+   // glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    
+    glEnable(GL_DEPTH_TEST);
+
 }

@@ -98,7 +98,7 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
         float tDeltaZ = stepZ / player->getView().z;
 
         bool found = false;
-        float distanceLimit = 5;
+        float distanceLimit = 30;
         Chunk* updatedChunk = window->getWorld()->getChunk(player->getChunkX(), player->getChunkZ());
 
         while (!found && (tMaxX < distanceLimit || tMaxY < distanceLimit || tMaxZ < distanceLimit)) {
