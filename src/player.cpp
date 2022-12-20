@@ -17,6 +17,9 @@ Player::Player() {
     this->yaw = 100.1;
     
     this->speed = SPEED;
+    // used for debugging
+    lastraypos = pos;
+    lastrayview = view;
 }
 void Player::moveFront(float moveDistance){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;

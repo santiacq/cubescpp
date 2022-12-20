@@ -1,6 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
 
 class Player {
@@ -28,6 +29,10 @@ class Player {
         int getChunkX();
         int getChunkZ();
         float getSpeed();
+
+        // used for debugging
+        glm::vec3 lastraypos;
+        glm::vec3 lastrayview;
 };
 
 #endif

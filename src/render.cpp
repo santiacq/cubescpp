@@ -31,6 +31,7 @@ Render::Render(Settings settings) {
     // build and compile shader program
     chunkShader = Shader("shaders/chunkvert.glsl", "shaders/chunkfrag.glsl");
     GUIShader = Shader("shaders/guivert.glsl", "shaders/guifrag.glsl");
+    rayShader = Shader("shaders/rayvert.glsl", "shaders/rayfrag.glsl");
     
     // set projection matrix 
     updateProjectionMatrix(settings);
@@ -43,6 +44,11 @@ void Render::updateProjectionMatrix(Settings settings) {
     chunkShader.use();
     this->projection = glm::perspective(settings.getFov(), (float) settings.getScreenWidth() / (float) settings.getScreenHeight(), settings.getNearViewDistance(), settings.getFarViewDistance());
     chunkShader.setFloatMatrix4("projection", (float*) &projection);
+    
+    rayShader.use();
+    rayShader.setFloatMatrix4("projection", (float*) &projection);
+    chunkShader.use();
+
 }
 
 // frustum culling / flood
@@ -110,9 +116,9 @@ void Render::render(Player player, World &world, Settings settings) {
     glDisable(GL_DEPTH_TEST);
 
     float vertices[] = {
-        -0.05f, -0.05f, 0.0f, // left  
-         0.05f, -0.05f, 0.0f, // right 
-         0.0f,  0.05f, 0.0f  // top   
+        -0.01f, -0.01f, 0.0f, // left  
+         0.01f, -0.01f, 0.0f, // right 
+         0.0f,  0.02f, 0.0f  // top   
     }; 
 
     glBindVertexArray(VAO);
@@ -127,5 +133,38 @@ void Render::render(Player player, World &world, Settings settings) {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     
     glEnable(GL_DEPTH_TEST);
+
+    // draw a line representing the last ray casted to break a block
+    rayShader.use();
+    rayShader.setFloatMatrix4("view", (float*) &view);
+
+    float rayVertices[6];
+    rayVertices[0] = player.lastraypos.x;
+    rayVertices[1] = player.lastraypos.y;
+    rayVertices[2] = player.lastraypos.z;
+    rayVertices[3] = player.lastraypos.x + player.lastrayview.x*20;
+    rayVertices[4] = player.lastraypos.y + player.lastrayview.y*20;
+    rayVertices[5] = player.lastraypos.z + player.lastrayview.z*20;
+    /*rayVertices[0] = 0;
+    rayVertices[1] = 20;
+    rayVertices[2] = 0;
+    rayVertices[3] = 20;
+    rayVertices[4] = 10;
+    rayVertices[5] = 20; */
+
+    /*rayVertices = {
+        player.lastraypos.x, player.lastraypos.y, player.lastraypos.z,
+        player.lastrayview.x, player.lastrayview.y, player.lastrayview.z 
+    }; */
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rayVertices), rayVertices, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glDrawArrays(GL_LINES, 0, 2);
+
 
 }
