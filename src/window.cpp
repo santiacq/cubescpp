@@ -66,6 +66,7 @@ static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0
 static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
     Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {  
+        // Raycasting algorithm based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" from John Amanatides and Andrew Woo
         Player* player = window->getPlayer();
 
         glm::ivec3 iter; // coordinates of current block being checked by the algorithm
