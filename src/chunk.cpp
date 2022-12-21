@@ -13,7 +13,7 @@ void Chunk::updateBlock(int x, int y, int z, Block block) {
 Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ) {
     float frequency = 0.2;
     float amplitude = 4;
-    int surfaceY = 10 + sin((x + chunkX*16)*frequency)*amplitude + sin((z + chunkZ*16)*frequency)*amplitude;
+    int surfaceY = 10 + sin((x + chunkX*CHUNK_SIZE)*frequency)*amplitude + sin((z + chunkZ*CHUNK_SIZE)*frequency)*amplitude;
     if (y < surfaceY) {
         return Block(Grass);
     } else if (y < 8) {

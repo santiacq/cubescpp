@@ -4,6 +4,10 @@
 #include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
 
+#define PLAYER_SPEED (float) 2.5
+// the range within which the player can break/place blocks
+#define PLAYER_BLOCK_RANGE 6
+
 class Player {
     private:
         glm::vec3 pos; // player position
@@ -29,10 +33,6 @@ class Player {
         int getChunkX();
         int getChunkZ();
         float getSpeed();
-
-        // used for debugging
-        glm::vec3 lastraypos;
-        glm::vec3 lastrayview;
 };
 
 #endif
