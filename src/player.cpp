@@ -7,16 +7,15 @@
 
 #include "chunk.hpp" // chunk size is needed to calculate current chunk
 
-#define SPEED (float) 5
 #define UP glm::vec3(0,1,0)
 
 Player::Player() {
-    this->pos = glm::vec3(0, 10, 0);
+    this->pos = glm::vec3(0, 20, 0);
     this->view = glm::vec3(0.017182, -0.999848, 0);
     this->pitch = -89;
     this->yaw = 100.1;
     
-    this->speed = SPEED;
+    this->speed = PLAYER_SPEED;
 }
 void Player::moveFront(float moveDistance){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
@@ -64,16 +63,16 @@ void Player::updateView() { // update view vector based on pitch and yaw
 
 int Player::getChunkX() {
     if (pos.x >= -0.5) {
-        return (pos.x + 0.5) / 16;
+        return (pos.x + 0.5) / CHUNK_SIZE;
     } else {
-        return ((pos.x + 0.5) / 16) - 1;
+        return ((pos.x + 0.5) / CHUNK_SIZE) - 1;
     }
 }
 int Player::getChunkZ() {
     if (pos.z >= -0.5) {
-        return (pos.z + 0.5) / 16;
+        return (pos.z + 0.5) / CHUNK_SIZE;
     } else {
-        return ((pos.z + 0.5) / 16) - 1;
+        return ((pos.z + 0.5) / CHUNK_SIZE) - 1;
     }
 }
 

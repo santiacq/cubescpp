@@ -10,7 +10,8 @@
 class Render {
     private:
         unsigned int VBO, VAO;
-        Shader shader;
+        Shader chunkShader;
+        Shader GUIShader;
         Atlas atlas;
         glm::mat4 projection, view;
         std::vector<Chunk*> getVisibleChunks(Player player, World &world, Settings settings);

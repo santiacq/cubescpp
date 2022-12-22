@@ -1,7 +1,12 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
+
+#define PLAYER_SPEED (float) 2.5
+// the range within which the player can break/place blocks
+#define PLAYER_BLOCK_RANGE 6
 
 class Player {
     private:

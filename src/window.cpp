@@ -1,5 +1,9 @@
 #include "window.hpp"
+#include "chunk.hpp"
 #include <cmath>
+#include <glm/ext/vector_float3.hpp>
+#include <glm/ext/vector_int3.hpp>
+#include <glm/fwd.hpp>
 #include <iostream>
 
 static void framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height)
@@ -55,9 +59,88 @@ static void mouse_callback(GLFWwindow* windowPtr, double xposIn, double yposIn) 
     window->getPlayer()->updateView();
 }
 
-static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-        std::cout << "click" << std::endl;
+static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0.
+    return (x > 0) - (x < 0);
+}
+
+static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
+    Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {  
+        // Raycasting algorithm based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" from John Amanatides and Andrew Woo
+        Player* player = window->getPlayer();
+
+        glm::ivec3 iter; // coordinates of current block being checked by the algorithm
+        glm::ivec3 step;
+        glm::vec3 origin, direction, tmax, tdelta;
+        bool found = false;
+        // currentChunk refers to the chunk where the block being currently processed (iter) is in
+        int currentChunkX = player->getChunkX();
+        int currentChunkZ = player->getChunkZ();
+        Chunk* currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
+        
+        iter = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
+        origin = player->getPos();
+        direction = player->getView();
+        step = {sign(direction.x), sign(direction.y), sign(direction.z)};
+
+        tmax.x = (round(origin.x) - origin.x + step.x * 0.5) / (direction.x);
+        tmax.y = (direction.y > 0 ? (ceilf(origin.y) - origin.y) : (origin.y - floorf(origin.y))) / std::abs(direction.y);
+        tmax.z = (round(origin.z) - origin.z + step.z * 0.5) / (direction.z);
+
+        tdelta = {(float)step.x / direction.x, (float)step.y / direction.y, (float)step.z / direction.z};
+
+        while (!found && (tmax.x < PLAYER_BLOCK_RANGE || tmax.y < PLAYER_BLOCK_RANGE || tmax.z < PLAYER_BLOCK_RANGE)) {
+            if (tmax.x < tmax.y) {
+                if (tmax.x < tmax.z) {
+                    iter.x += step.x;
+                    tmax.x += tdelta.x;
+                } else {
+                    iter.z += step.z;
+                    tmax.z += tdelta.z;
+                }
+            } else {
+                if (tmax.y < tmax.z) {
+                    iter.y += step.y;
+                    tmax.y += tdelta.y;
+                } else {
+                    iter.z += step.z;
+                    tmax.z += tdelta.z;
+                }
+            }
+            if (iter.y < 0 || iter.y > WORLD_HEIGHT - 1) {
+                break;
+            }
+            // update currentChunk
+            int newChunkX = currentChunkX;
+            int newChunkZ = currentChunkZ;
+            if (iter.x < 0) {
+                iter.x = CHUNK_SIZE + iter.x;
+                newChunkX = currentChunkX - 1;
+            } else if (iter.x > CHUNK_SIZE - 1) {
+                iter.x = iter.x - CHUNK_SIZE;
+                newChunkX = currentChunkX + 1;
+            }
+            if (iter.z < 0) {
+                iter.z = CHUNK_SIZE + iter.z;
+                newChunkZ = currentChunkZ - 1;
+            } else if (iter.z > CHUNK_SIZE - 1) {
+                iter.z = iter.z - CHUNK_SIZE;
+                newChunkZ = currentChunkZ + 1;
+            }
+            if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
+                currentChunkX = newChunkX;
+                currentChunkZ = newChunkZ;
+                currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
+            }
+
+            if (currentChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
+                found = true;
+            }
+        }
+        if (found) {
+            currentChunk->updateBlock(iter.x, iter.y, iter.z, Air, window->getWorld());
+        }
+    }
 }
 
 Window::Window(Settings &settings, Player &player, World &world) {
@@ -145,6 +228,9 @@ Settings* Window::getSettings() {
 }
 Player* Window::getPlayer() {
     return player;
+}
+World* Window::getWorld() {
+    return world;
 }
 void Window::setLastX(float value) {
     lastX = value;
