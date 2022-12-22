@@ -5,9 +5,19 @@
 #include <math.h>
 #include "world.hpp"
 
-void Chunk::updateBlock(int x, int y, int z, Block block) {
+void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
     this->blocks[x][y][z] = block;
     this->isMeshOutdated = true;
+    if (x == 0) {
+        world->getChunk(this->chunkX - 1, this->chunkZ)->isMeshOutdated = true;
+    } else if (x == CHUNK_SIZE - 1) {
+        world->getChunk(this->chunkX + 1, this->chunkZ)->isMeshOutdated = true;
+    }
+    if (z == 0) {
+        world->getChunk(this->chunkX, this->chunkZ - 1)->isMeshOutdated = true;
+    } else if (z == CHUNK_SIZE - 1) {
+        world->getChunk(this->chunkX, this->chunkZ + 1)->isMeshOutdated = true;
+    }
 }
 
 Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ) {

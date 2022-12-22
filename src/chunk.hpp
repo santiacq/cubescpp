@@ -32,7 +32,7 @@ class Chunk {
         bool isMeshOutdated;
         Mesh* getMesh(); // get last mesh
         Block getBlock(unsigned int x, unsigned int y, unsigned int z);
-        void updateBlock(int x, int y, int z, Block block);
+        void updateBlock(int x, int y, int z, Block block, World* world);
 };
 
 #endif

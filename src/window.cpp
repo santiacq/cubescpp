@@ -138,7 +138,7 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
             }
         }
         if (found) {
-            currentChunk->updateBlock(iter.x, iter.y, iter.z, Air);
+            currentChunk->updateBlock(iter.x, iter.y, iter.z, Air, window->getWorld());
         }
     }
 }
