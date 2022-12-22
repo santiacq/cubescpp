@@ -110,9 +110,20 @@ void Render::render(Player player, World &world, Settings settings) {
     glDisable(GL_DEPTH_TEST);
 
     float vertices[] = {
-        -0.01f, -0.01f, 0.0f, // left  
-         0.01f, -0.01f, 0.0f, // right 
-         0.0f,  0.02f, 0.0f  // top   
+        // vertical
+        -0.001f , 0.015f    , 0.0f,
+        -0.001f , -0.015f   , 0.0f,
+        0.001f  , -0.015f   , 0.0f,
+        0.001f  , -0.015f   , 0.0f,
+        0.001f  , 0.015f    , 0.0f,
+        -0.001f , 0.015f    , 0.0f,
+        // horizontal
+        -0.008f , 0.002f    , 0.0f,
+        -0.008f , -0.002f   , 0.0f,
+        0.008f  , -0.002f   , 0.0f,
+        0.008f  , -0.002f   , 0.0f,
+        0.008f  , 0.002f    , 0.0f,
+        -0.008f , 0.002f    , 0.0f,
     }; 
 
     glBindVertexArray(VAO);
@@ -123,8 +134,7 @@ void Render::render(Player player, World &world, Settings settings) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-   // glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 12);
     
     glEnable(GL_DEPTH_TEST);
 }
