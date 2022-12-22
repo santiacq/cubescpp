@@ -73,8 +73,11 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
         glm::ivec3 step;
         glm::vec3 origin, direction, tmax, tdelta;
         bool found = false;
-        Chunk* updatedChunk = window->getWorld()->getChunk(player->getChunkX(), player->getChunkZ());
-
+        // currentChunk refers to the chunk where the block being currently processed (iter) is in
+        int currentChunkX = player->getChunkX();
+        int currentChunkZ = player->getChunkZ();
+        Chunk* currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
+        
         iter = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
         origin = player->getPos();
         direction = player->getView();
@@ -104,12 +107,38 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
                     tmax.z += tdelta.z;
                 }
             }
-            if (updatedChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
+            if (iter.y < 0 || iter.y > WORLD_HEIGHT - 1) {
+                break;
+            }
+            // update currentChunk
+            int newChunkX = currentChunkX;
+            int newChunkZ = currentChunkZ;
+            if (iter.x < 0) {
+                iter.x = CHUNK_SIZE + iter.x;
+                newChunkX = currentChunkX - 1;
+            } else if (iter.x > CHUNK_SIZE - 1) {
+                iter.x = iter.x - CHUNK_SIZE;
+                newChunkX = currentChunkX + 1;
+            }
+            if (iter.z < 0) {
+                iter.z = CHUNK_SIZE + iter.z;
+                newChunkZ = currentChunkZ - 1;
+            } else if (iter.z > CHUNK_SIZE - 1) {
+                iter.z = iter.z - CHUNK_SIZE;
+                newChunkZ = currentChunkZ + 1;
+            }
+            if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
+                currentChunkX = newChunkX;
+                currentChunkZ = newChunkZ;
+                currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
+            }
+
+            if (currentChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
                 found = true;
             }
         }
         if (found) {
-            updatedChunk->updateBlock(iter.x, iter.y, iter.z, Air);
+            currentChunk->updateBlock(iter.x, iter.y, iter.z, Air);
         }
     }
 }

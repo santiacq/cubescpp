@@ -23,17 +23,14 @@ int main() {
         // calculate delta
         // ---- ---- ----
         clock.tick();
-
         //std::cout << "FPS: " << 1/clock.getDelta() << std::endl;
 
         // process input
         // ---- ---- ----
         window.processInput(player, clock);
 
-
         // update
         // ---- ---- ----
-
 
         // render
         // ---- ---- ----
