@@ -65,6 +65,38 @@ static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0
     return (x > 0) - (x < 0);
 }
 
+/*  Auxiliary function used in raycast and to calculate placed blocks
+    takes the currentChunk, its chunkX and chunkZ coordinates and the coords of the block to be updated
+    if the coordinates of the block are outside of the currentChunk (x < 0 || x > CHUNK_SIZE - 1 || z < 0 || z > CHUNK_SIZE - 1)
+    it updates the block coordinates, the chunkCoordinates, and returns a pointer to the new currentChunk
+    if there's nothing to update it returns its input unmodified
+*/
+static std::tuple<glm::ivec3, int, int, Chunk*> updateCurrentChunk(glm::vec3 coords, int currentChunkX, int currentChunkZ, Chunk* currentChunk, World* world) {
+    // update currentChunk
+    int newChunkX = currentChunkX;
+    int newChunkZ = currentChunkZ;
+    if (coords.x < 0) {
+        coords.x = CHUNK_SIZE + coords.x;
+        newChunkX = currentChunkX - 1;
+    } else if (coords.x > CHUNK_SIZE - 1) {
+        coords.x = coords.x - CHUNK_SIZE;
+        newChunkX = currentChunkX + 1;
+    }
+    if (coords.z < 0) {
+        coords.z = CHUNK_SIZE + coords.z;
+        newChunkZ = currentChunkZ - 1;
+    } else if (coords.z > CHUNK_SIZE - 1) {
+        coords.z = coords.z - CHUNK_SIZE;
+        newChunkZ = currentChunkZ + 1;
+    }
+    if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
+        currentChunkX = newChunkX;
+        currentChunkZ = newChunkZ;
+        currentChunk = world->getChunk(currentChunkX, currentChunkZ);
+    }
+    return std::tuple<glm::ivec3, int, int, Chunk*>(coords, currentChunkX, currentChunkZ, currentChunk);
+}
+
 /*  Raycasting algorithm based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" from John Amanatides and Andrew Woo
 
     Casts a ray from the player position towards the player view vector, and returns a tuple with information 
@@ -74,23 +106,24 @@ static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0
     The tuple returned has the following entries:
     0. a boolean that is true if and only if the ray intersected a block
     (the following are irrelevant if 1 == false)
-    1. a vector with the chunk coordinates of the intersected block
+    1. a vector with the coordinates of the intersected block
     2. the chunkX coordinate of the chunk where the intersected block is in
     3. the chunkZ coordinate of the chunk where the intersected block is in
     4. a pointer to the chunk where the intersected block is in
     5. a vector with the normal of the face of the block that ray intersected
 */
 static std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> raycast(Player* player, World* world) {
-    glm::ivec3 iter; // coordinates of current block being checked by the algorithm
+    glm::ivec3 coords; // coordinates of current block being checked by the algorithm
+    glm::ivec3 normal; // normal of the face of the intersected block
     glm::ivec3 step;
     glm::vec3 origin, direction, tmax, tdelta;
     bool found = false;
-    // currentChunk refers to the chunk where the block being currently processed (iter) is in
+    // currentChunk refers to the chunk where the block being currently processed (coords) is in
     int currentChunkX = player->getChunkX();
     int currentChunkZ = player->getChunkZ();
     Chunk* currentChunk = world->getChunk(currentChunkX, currentChunkZ);
     
-    iter = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
+    coords = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
     origin = player->getPos();
     direction = player->getView();
     step = {sign(direction.x), sign(direction.y), sign(direction.z)};
@@ -104,60 +137,72 @@ static std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> raycast(Player
     while (!found && (tmax.x < PLAYER_BLOCK_RANGE || tmax.y < PLAYER_BLOCK_RANGE || tmax.z < PLAYER_BLOCK_RANGE)) {
         if (tmax.x < tmax.y) {
             if (tmax.x < tmax.z) {
-                iter.x += step.x;
+                coords.x += step.x;
                 tmax.x += tdelta.x;
+                normal = {-step.x, 0, 0};
             } else {
-                iter.z += step.z;
+                coords.z += step.z;
                 tmax.z += tdelta.z;
+                normal = {0, 0, -step.z};
             }
         } else {
             if (tmax.y < tmax.z) {
-                iter.y += step.y;
+                coords.y += step.y;
                 tmax.y += tdelta.y;
+                normal = {0, -step.y, 0};
             } else {
-                iter.z += step.z;
+                coords.z += step.z;
                 tmax.z += tdelta.z;
+                normal = {0, 0, -step.z};
             }
         }
-        if (iter.y < 0 || iter.y > WORLD_HEIGHT - 1) {
+        if (coords.y < 0 || coords.y > WORLD_HEIGHT - 1) {
             break;
         }
-        // update currentChunk
-        int newChunkX = currentChunkX;
-        int newChunkZ = currentChunkZ;
-        if (iter.x < 0) {
-            iter.x = CHUNK_SIZE + iter.x;
-            newChunkX = currentChunkX - 1;
-        } else if (iter.x > CHUNK_SIZE - 1) {
-            iter.x = iter.x - CHUNK_SIZE;
-            newChunkX = currentChunkX + 1;
-        }
-        if (iter.z < 0) {
-            iter.z = CHUNK_SIZE + iter.z;
-            newChunkZ = currentChunkZ - 1;
-        } else if (iter.z > CHUNK_SIZE - 1) {
-            iter.z = iter.z - CHUNK_SIZE;
-            newChunkZ = currentChunkZ + 1;
-        }
-        if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
-            currentChunkX = newChunkX;
-            currentChunkZ = newChunkZ;
-            currentChunk = world->getChunk(currentChunkX, currentChunkZ);
-        }
 
-        if (currentChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
+        std::tuple<glm::ivec3, int, int, Chunk*> t = updateCurrentChunk(coords, currentChunkX, currentChunkZ, currentChunk, world);
+        coords = std::get<0>(t);
+        currentChunkX = std::get<1>(t);
+        currentChunkZ = std::get<2>(t);
+        currentChunk = std::get<3>(t);
+
+        if (currentChunk->getBlock(coords.x, coords.y, coords.z).getType() != Air) {
             found = true;
         }
     }
-    return std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3>(found, iter, currentChunkX, currentChunkZ, currentChunk, {0, 0, 0});
+    return std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3>(found, coords, currentChunkX, currentChunkZ, currentChunk, normal);
 }
 
 static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
     Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {  
-        std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> t = raycast(window->getPlayer(), window->getWorld());  
-        if (std::get<0>(t)) {
-            std::get<4>(t)->updateBlock(std::get<1>(t).x, std::get<1>(t).y, std::get<1>(t).z, Air, window->getWorld());
+        
+        std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> t = raycast(window->getPlayer(), window->getWorld());
+        bool found = std::get<0>(t);
+        glm::ivec3 coords = std::get<1>(t);
+        Chunk* currentChunk = std::get<4>(t);
+
+        if (found) {
+            currentChunk->updateBlock(coords.x, coords.y, coords.z, Air, window->getWorld());
+        }
+    } else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        
+        std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> t = raycast(window->getPlayer(), window->getWorld());
+        bool found = std::get<0>(t);
+        glm::ivec3 coords = std::get<1>(t);
+        int currentChunkX =std::get<2>(t);
+        int currentChunkZ =std::get<3>(t);
+        Chunk* currentChunk = std::get<4>(t);
+        glm::ivec3 normal = std::get<5>(t);
+
+        if (found) {
+            std::tuple<glm::ivec3, int, int, Chunk*> t = updateCurrentChunk(coords + normal, currentChunkX, currentChunkZ, currentChunk, window->getWorld());
+            coords = std::get<0>(t);
+            currentChunkX = std::get<1>(t);
+            currentChunkZ = std::get<2>(t);
+            currentChunk = std::get<3>(t);
+        
+            currentChunk->updateBlock(coords.x, coords.y, coords.z, Stone, window->getWorld());
         }
     }
 }
