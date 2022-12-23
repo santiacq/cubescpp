@@ -2,8 +2,8 @@
 
 Settings::Settings() {
     // default values
-    screenWidth = 1280;
-    screenHeight = 720;
+    screenWidth = 1920;
+    screenHeight = 1080;
     nearViewDistance = 0.1;
     farViewDistance = 1000;
     fov = 45;

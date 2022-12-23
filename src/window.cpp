@@ -5,6 +5,8 @@
 #include <glm/ext/vector_int3.hpp>
 #include <glm/fwd.hpp>
 #include <iostream>
+#include <tuple>
+#include <utility>
 
 static void framebuffer_size_callback(GLFWwindow* windowPtr, int width, int height)
 {
@@ -63,82 +65,99 @@ static int sign(float x) { // returns 1 if x is positive, -1 if negative, 0 if 0
     return (x > 0) - (x < 0);
 }
 
+/*  Raycasting algorithm based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" from John Amanatides and Andrew Woo
+
+    Casts a ray from the player position towards the player view vector, and returns a tuple with information 
+    about whether it intersected a block in the PLAYER_BLOCK_RANGE, and in case it did it returns the coordinates of
+    that block, and the face in which it was intersected
+    
+    The tuple returned has the following entries:
+    0. a boolean that is true if and only if the ray intersected a block
+    (the following are irrelevant if 1 == false)
+    1. a vector with the chunk coordinates of the intersected block
+    2. the chunkX coordinate of the chunk where the intersected block is in
+    3. the chunkZ coordinate of the chunk where the intersected block is in
+    4. a pointer to the chunk where the intersected block is in
+    5. a vector with the normal of the face of the block that ray intersected
+*/
+static std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> raycast(Player* player, World* world) {
+    glm::ivec3 iter; // coordinates of current block being checked by the algorithm
+    glm::ivec3 step;
+    glm::vec3 origin, direction, tmax, tdelta;
+    bool found = false;
+    // currentChunk refers to the chunk where the block being currently processed (iter) is in
+    int currentChunkX = player->getChunkX();
+    int currentChunkZ = player->getChunkZ();
+    Chunk* currentChunk = world->getChunk(currentChunkX, currentChunkZ);
+    
+    iter = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
+    origin = player->getPos();
+    direction = player->getView();
+    step = {sign(direction.x), sign(direction.y), sign(direction.z)};
+
+    tmax.x = (round(origin.x) - origin.x + step.x * 0.5) / (direction.x);
+    tmax.y = (direction.y > 0 ? (ceilf(origin.y) - origin.y) : (origin.y - floorf(origin.y))) / std::abs(direction.y);
+    tmax.z = (round(origin.z) - origin.z + step.z * 0.5) / (direction.z);
+
+    tdelta = {(float)step.x / direction.x, (float)step.y / direction.y, (float)step.z / direction.z};
+
+    while (!found && (tmax.x < PLAYER_BLOCK_RANGE || tmax.y < PLAYER_BLOCK_RANGE || tmax.z < PLAYER_BLOCK_RANGE)) {
+        if (tmax.x < tmax.y) {
+            if (tmax.x < tmax.z) {
+                iter.x += step.x;
+                tmax.x += tdelta.x;
+            } else {
+                iter.z += step.z;
+                tmax.z += tdelta.z;
+            }
+        } else {
+            if (tmax.y < tmax.z) {
+                iter.y += step.y;
+                tmax.y += tdelta.y;
+            } else {
+                iter.z += step.z;
+                tmax.z += tdelta.z;
+            }
+        }
+        if (iter.y < 0 || iter.y > WORLD_HEIGHT - 1) {
+            break;
+        }
+        // update currentChunk
+        int newChunkX = currentChunkX;
+        int newChunkZ = currentChunkZ;
+        if (iter.x < 0) {
+            iter.x = CHUNK_SIZE + iter.x;
+            newChunkX = currentChunkX - 1;
+        } else if (iter.x > CHUNK_SIZE - 1) {
+            iter.x = iter.x - CHUNK_SIZE;
+            newChunkX = currentChunkX + 1;
+        }
+        if (iter.z < 0) {
+            iter.z = CHUNK_SIZE + iter.z;
+            newChunkZ = currentChunkZ - 1;
+        } else if (iter.z > CHUNK_SIZE - 1) {
+            iter.z = iter.z - CHUNK_SIZE;
+            newChunkZ = currentChunkZ + 1;
+        }
+        if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
+            currentChunkX = newChunkX;
+            currentChunkZ = newChunkZ;
+            currentChunk = world->getChunk(currentChunkX, currentChunkZ);
+        }
+
+        if (currentChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
+            found = true;
+        }
+    }
+    return std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3>(found, iter, currentChunkX, currentChunkZ, currentChunk, {0, 0, 0});
+}
+
 static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action, int mods) {
     Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {  
-        // Raycasting algorithm based on the paper "A Fast Voxel Traversal Algorithm for Ray Tracing" from John Amanatides and Andrew Woo
-        Player* player = window->getPlayer();
-
-        glm::ivec3 iter; // coordinates of current block being checked by the algorithm
-        glm::ivec3 step;
-        glm::vec3 origin, direction, tmax, tdelta;
-        bool found = false;
-        // currentChunk refers to the chunk where the block being currently processed (iter) is in
-        int currentChunkX = player->getChunkX();
-        int currentChunkZ = player->getChunkZ();
-        Chunk* currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
-        
-        iter = {round(player->getPos().x - (player->getChunkX()*CHUNK_SIZE)), floor(player->getPos().y), round(player->getPos().z - (player->getChunkZ()*CHUNK_SIZE))};
-        origin = player->getPos();
-        direction = player->getView();
-        step = {sign(direction.x), sign(direction.y), sign(direction.z)};
-
-        tmax.x = (round(origin.x) - origin.x + step.x * 0.5) / (direction.x);
-        tmax.y = (direction.y > 0 ? (ceilf(origin.y) - origin.y) : (origin.y - floorf(origin.y))) / std::abs(direction.y);
-        tmax.z = (round(origin.z) - origin.z + step.z * 0.5) / (direction.z);
-
-        tdelta = {(float)step.x / direction.x, (float)step.y / direction.y, (float)step.z / direction.z};
-
-        while (!found && (tmax.x < PLAYER_BLOCK_RANGE || tmax.y < PLAYER_BLOCK_RANGE || tmax.z < PLAYER_BLOCK_RANGE)) {
-            if (tmax.x < tmax.y) {
-                if (tmax.x < tmax.z) {
-                    iter.x += step.x;
-                    tmax.x += tdelta.x;
-                } else {
-                    iter.z += step.z;
-                    tmax.z += tdelta.z;
-                }
-            } else {
-                if (tmax.y < tmax.z) {
-                    iter.y += step.y;
-                    tmax.y += tdelta.y;
-                } else {
-                    iter.z += step.z;
-                    tmax.z += tdelta.z;
-                }
-            }
-            if (iter.y < 0 || iter.y > WORLD_HEIGHT - 1) {
-                break;
-            }
-            // update currentChunk
-            int newChunkX = currentChunkX;
-            int newChunkZ = currentChunkZ;
-            if (iter.x < 0) {
-                iter.x = CHUNK_SIZE + iter.x;
-                newChunkX = currentChunkX - 1;
-            } else if (iter.x > CHUNK_SIZE - 1) {
-                iter.x = iter.x - CHUNK_SIZE;
-                newChunkX = currentChunkX + 1;
-            }
-            if (iter.z < 0) {
-                iter.z = CHUNK_SIZE + iter.z;
-                newChunkZ = currentChunkZ - 1;
-            } else if (iter.z > CHUNK_SIZE - 1) {
-                iter.z = iter.z - CHUNK_SIZE;
-                newChunkZ = currentChunkZ + 1;
-            }
-            if (newChunkX != currentChunkX || newChunkZ != currentChunkZ) {
-                currentChunkX = newChunkX;
-                currentChunkZ = newChunkZ;
-                currentChunk = window->getWorld()->getChunk(currentChunkX, currentChunkZ);
-            }
-
-            if (currentChunk->getBlock(iter.x, iter.y, iter.z).getType() != Air) {
-                found = true;
-            }
-        }
-        if (found) {
-            currentChunk->updateBlock(iter.x, iter.y, iter.z, Air, window->getWorld());
+        std::tuple<bool, glm::ivec3, int, int, Chunk*, glm::ivec3> t = raycast(window->getPlayer(), window->getWorld());  
+        if (std::get<0>(t)) {
+            std::get<4>(t)->updateBlock(std::get<1>(t).x, std::get<1>(t).y, std::get<1>(t).z, Air, window->getWorld());
         }
     }
 }
@@ -157,7 +176,7 @@ Window::Window(Settings &settings, Player &player, World &world) {
 
     // glfw window creation
     // --------------------
-   windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", NULL, NULL);
+   windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", glfwGetPrimaryMonitor(), NULL);
     if (windowPtr == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
