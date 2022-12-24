@@ -6,7 +6,8 @@ enum Blocktype {
     Grass,
     Dirt,
     Stone,
-    Water
+    Water,
+    Wood
 };
 typedef enum Blocktype Blocktype;
 

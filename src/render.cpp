@@ -57,8 +57,8 @@ std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settin
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() + 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ() - 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() - 1));*/
-    for (int x = -3; x <= 3; x++) {
-        for (int z = -3; z <= 3; z++) {
+    for (int x = -4; x <= 4; x++) {
+        for (int z = -4; z <= 4; z++) {
             visibleChunks.push_back(world.getChunk(player.getChunkX() + x, player.getChunkZ() + z));
         }
     }

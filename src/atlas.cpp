@@ -15,6 +15,9 @@
 #define TEXTURE_WATER_TOP 4
 #define TEXTURE_WATER_SIDE 4
 #define TEXTURE_WATER_BOTTOM 4
+#define TEXTURE_WOOD_TOP 5
+#define TEXTURE_WOOD_SIDE 5
+#define TEXTURE_WOOD_BOTTOM 5
 
 // macro for the case inside the switch statement for each blocktype
 #define SWITCH(BLOCK) {\
@@ -45,6 +48,9 @@ unsigned int Atlas::atlasPosition(Block b, Ubication u) {
             break;
         case Water:
             SWITCH(WATER);
+            break;
+        case Wood:
+            SWITCH(WOOD);
             break;
         default:
             return 0; // this won't happen unless blocktype is passed wrong

@@ -202,7 +202,7 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
             currentChunkZ = std::get<2>(t);
             currentChunk = std::get<3>(t);
         
-            currentChunk->updateBlock(coords.x, coords.y, coords.z, Stone, window->getWorld());
+            currentChunk->updateBlock(coords.x, coords.y, coords.z, Wood, window->getWorld());
         }
     }
 }

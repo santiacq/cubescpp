@@ -26,7 +26,7 @@ libs:
 	cd lib/glad && $(CC) -o ../../$(ODIR)/glad.o -Iinclude -c src/glad.c
 
 run: all
-	./cubescpp
+	mangohud --dlsym ./cubescpp
 
 $(ODIR)/$(MAIN).o:$(CPPDIR)/$(MAIN).cpp
 	$(CC) $(CCFLAGS) -c $< -o $@
