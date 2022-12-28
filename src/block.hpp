@@ -7,11 +7,14 @@ enum Blocktype {
     Dirt,
     Stone,
     Water,
-    Wood
+    Wood,
+    Log,
+    Leaves,
+    Rocks
 };
 typedef enum Blocktype Blocktype;
 
-const Blocktype placeableBlocks[] {Grass, Dirt, Stone, Wood};
+const Blocktype placeableBlocks[] {Grass, Dirt, Stone, Wood, Log, Leaves, Rocks};
 
 class Block {
     private:

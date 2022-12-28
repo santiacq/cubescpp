@@ -87,7 +87,7 @@ void Player::increaseCurrentBlock() {
 }
 
 void Player::decreaseCurrentBlock() {
-    currentBlockIndex = (currentBlockIndex - 1) % (sizeof(placeableBlocks) / sizeof(Blocktype));
+    currentBlockIndex = (currentBlockIndex + (sizeof(placeableBlocks) / sizeof(Blocktype) - 1)) % (sizeof(placeableBlocks) / sizeof(Blocktype));
 }
 
 unsigned int Player::getCurrentBlockIndex() {
