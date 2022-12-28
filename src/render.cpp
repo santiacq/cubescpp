@@ -109,7 +109,26 @@ void Render::render(Player player, World &world, Settings settings) {
     GUIShader.use();
     glDisable(GL_DEPTH_TEST);
 
+    float w = settings.getScreenWidth();
+    float h = settings.getScreenHeight();
     float vertices[] = {
+        // vertical
+        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,
+        -1.0f/(0.4f*w) , -1.0f/(0.07f*h)   , 0.0f,
+        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,
+        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,
+        1.0f/(0.4f*w)  , 1.0f/(0.07f*h)    , 0.0f,
+        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,
+        // horizontal
+        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,
+        -1.0f/(0.07f*w) , -1.0f/(0.4f*h)   , 0.0f,
+        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,
+        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,
+        1.0f/(0.07f*w)  , 1.0f/(0.4f*h)    , 0.0f,
+        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,
+    }; 
+
+        /*float vertices[] = {
         // vertical
         -0.001f , 0.015f    , 0.0f,
         -0.001f , -0.015f   , 0.0f,
@@ -124,7 +143,7 @@ void Render::render(Player player, World &world, Settings settings) {
         0.008f  , -0.002f   , 0.0f,
         0.008f  , 0.002f    , 0.0f,
         -0.008f , 0.002f    , 0.0f,
-    }; 
+    };*/
 
     glBindVertexArray(VAO);
 

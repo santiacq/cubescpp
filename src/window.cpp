@@ -230,7 +230,8 @@ Window::Window(Settings &settings, Player &player, World &world) {
 
     // glfw window creation
     // --------------------
-   windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", glfwGetPrimaryMonitor(), NULL);
+    //windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", NULL, NULL);
+    windowPtr = glfwCreateWindow(settings.getScreenWidth(), settings.getScreenHeight(), "cubescpp", glfwGetPrimaryMonitor(), NULL);
     if (windowPtr == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
