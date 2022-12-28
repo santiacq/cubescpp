@@ -1,6 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include "block.hpp"
 #include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
 
@@ -14,6 +15,7 @@ class Player {
         float pitch, yaw; // angles corresponding to the view direction
         glm::vec3 view; // view direction
         float speed;
+        unsigned int currentBlockIndex; //index of the block selected to place next in the placeableBlocks array
     public:
         Player();
         void moveFront(float moveDistance);
@@ -33,6 +35,9 @@ class Player {
         int getChunkX();
         int getChunkZ();
         float getSpeed();
+        void increaseCurrentBlock();
+        void decreaseCurrentBlock();
+        unsigned int getCurrentBlockIndex();
 };
 
 #endif

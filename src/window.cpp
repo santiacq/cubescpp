@@ -202,8 +202,17 @@ static void mouse_button_callback(GLFWwindow* windowPtr, int button, int action,
             currentChunkZ = std::get<2>(t);
             currentChunk = std::get<3>(t);
         
-            currentChunk->updateBlock(coords.x, coords.y, coords.z, Wood, window->getWorld());
+            currentChunk->updateBlock(coords.x, coords.y, coords.z, placeableBlocks[window->getPlayer()->getCurrentBlockIndex()], window->getWorld());
         }
+    }
+}
+
+static void scroll_callback(GLFWwindow* windowPtr, double xoffset, double yoffset) {
+    Window* window = (Window*) glfwGetWindowUserPointer(windowPtr);
+    if (yoffset > 0) {
+        window->getPlayer()->increaseCurrentBlock();
+    } else {
+        window->getPlayer()->decreaseCurrentBlock();
     }
 }
 
@@ -249,6 +258,7 @@ Window::Window(Settings &settings, Player &player, World &world) {
     glfwSetCursorPosCallback(windowPtr, mouse_callback);
     glfwSetKeyCallback(windowPtr, keyboard_callback);
     glfwSetMouseButtonCallback(windowPtr, mouse_button_callback);
+    glfwSetScrollCallback(windowPtr, scroll_callback);
 }
 
 Window::~Window() {

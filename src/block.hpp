@@ -11,6 +11,8 @@ enum Blocktype {
 };
 typedef enum Blocktype Blocktype;
 
+const Blocktype placeableBlocks[] {Grass, Dirt, Stone, Wood};
+
 class Block {
     private:
         Blocktype type;

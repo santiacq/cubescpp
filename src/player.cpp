@@ -5,6 +5,7 @@
 #include <glm/trigonometric.hpp>
 #include <iostream>
 
+#include "block.hpp"
 #include "chunk.hpp" // chunk size is needed to calculate current chunk
 
 #define UP glm::vec3(0,1,0)
@@ -16,6 +17,7 @@ Player::Player() {
     this->yaw = 100.1;
     
     this->speed = PLAYER_SPEED;
+    this->currentBlockIndex = 0;
 }
 void Player::moveFront(float moveDistance){
     this->pos -= glm::normalize(glm::cross(glm::cross(this->view, UP), UP)) * moveDistance;
@@ -78,4 +80,16 @@ int Player::getChunkZ() {
 
 float Player::getSpeed() {
     return speed;
+}
+
+void Player::increaseCurrentBlock() {
+    currentBlockIndex = (currentBlockIndex + 1) % (sizeof(placeableBlocks) / sizeof(Blocktype));
+}
+
+void Player::decreaseCurrentBlock() {
+    currentBlockIndex = (currentBlockIndex - 1) % (sizeof(placeableBlocks) / sizeof(Blocktype));
+}
+
+unsigned int Player::getCurrentBlockIndex() {
+    return currentBlockIndex;
 }
