@@ -18,5 +18,7 @@ class Render {
     public:
         Render(Settings settings);
         void render(Player player, World &world, Settings settings);
+        void renderWorld(Player player, World &world, Settings settings);
+        void renderGUI(Player player, Settings settings);
         void updateProjectionMatrix(Settings settings);
 };

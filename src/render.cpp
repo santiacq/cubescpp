@@ -66,16 +66,8 @@ std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settin
     return visibleChunks;
 }
 
-void Render::render(Player player, World &world, Settings settings) {
-    // Clear color buffer and z buffer
-    glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Update view matrix
-    chunkShader.use();
-    this->view = glm::lookAt(player.getPos(), player.getPos() + player.getView(), UP);
-    chunkShader.setFloatMatrix4("view", (float*) &view);
-    
-    // Render world
+void Render::renderWorld(Player player, World &world, Settings settings) {
+    // assumes that chunkShader is already being used
 
     // choose which chunks to render using frustum culling and put them in a vector
     std::vector<Chunk*> visibleChunks = getVisibleChunks(player, world, settings);
@@ -105,8 +97,9 @@ void Render::render(Player player, World &world, Settings settings) {
         // draw the blocks
         glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
     }
-    
-    // Render GUI
+}
+
+void Render::renderGUI(Player player, Settings settings) {
     GUIShader.use();
     glDisable(GL_DEPTH_TEST);
 
@@ -148,7 +141,7 @@ void Render::render(Player player, World &world, Settings settings) {
     // draw currently selected blocktype
     GUIShader.setBool("crosshair", false);
 
-    float m = 200;
+    float m = 200; // variable used to adjust the blocktype square size (the bigger the number the bigger the square)
     Atlas a = this->atlas;
     Blocktype b = placeableBlocks[player.getCurrentBlockIndex()];
 
@@ -175,4 +168,21 @@ void Render::render(Player player, World &world, Settings settings) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
     glEnable(GL_DEPTH_TEST);
+}
+
+void Render::render(Player player, World &world, Settings settings) {
+    // Clear color buffer and z buffer
+    glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // Update view matrix
+    chunkShader.use();
+    this->view = glm::lookAt(player.getPos(), player.getPos() + player.getView(), UP);
+    chunkShader.setFloatMatrix4("view", (float*) &view);
+    
+    // Render world
+    this->renderWorld(player, world, settings);
+    
+    // Render GUI
+    this->renderGUI(player, settings);
 }
