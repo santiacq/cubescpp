@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <iostream>
 
+#include "block.hpp"
 #include "render.hpp"
 #include "shader.hpp"
 
@@ -111,49 +112,67 @@ void Render::render(Player player, World &world, Settings settings) {
 
     float w = settings.getScreenWidth();
     float h = settings.getScreenHeight();
-    float vertices[] = {
-        // vertical
-        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,
-        -1.0f/(0.4f*w) , -1.0f/(0.07f*h)   , 0.0f,
-        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,
-        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,
-        1.0f/(0.4f*w)  , 1.0f/(0.07f*h)    , 0.0f,
-        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,
+    // crosshair
+    GUIShader.setBool("crosshair", true);
+    
+    float crosshairVertices[] = {
+        // vertical                                     // (texture coords)
+        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,      0.0f, 0.0f,
+        -1.0f/(0.4f*w) , -1.0f/(0.07f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.4f*w)  , -1.0f/(0.07f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.4f*w)  , 1.0f/(0.07f*h)    , 0.0f,      0.0f, 0.0f,
+        -1.0f/(0.4f*w) , 1.0f/(0.07f*h)    , 0.0f,      0.0f, 0.0f,
         // horizontal
-        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,
-        -1.0f/(0.07f*w) , -1.0f/(0.4f*h)   , 0.0f,
-        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,
-        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,
-        1.0f/(0.07f*w)  , 1.0f/(0.4f*h)    , 0.0f,
-        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,
-    }; 
-
-        /*float vertices[] = {
-        // vertical
-        -0.001f , 0.015f    , 0.0f,
-        -0.001f , -0.015f   , 0.0f,
-        0.001f  , -0.015f   , 0.0f,
-        0.001f  , -0.015f   , 0.0f,
-        0.001f  , 0.015f    , 0.0f,
-        -0.001f , 0.015f    , 0.0f,
-        // horizontal
-        -0.008f , 0.002f    , 0.0f,
-        -0.008f , -0.002f   , 0.0f,
-        0.008f  , -0.002f   , 0.0f,
-        0.008f  , -0.002f   , 0.0f,
-        0.008f  , 0.002f    , 0.0f,
-        -0.008f , 0.002f    , 0.0f,
-    };*/
+        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,      0.0f, 0.0f,
+        -1.0f/(0.07f*w) , -1.0f/(0.4f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.07f*w)  , -1.0f/(0.4f*h)   , 0.0f,      0.0f, 0.0f,
+        1.0f/(0.07f*w)  , 1.0f/(0.4f*h)    , 0.0f,      0.0f, 0.0f,
+        -1.0f/(0.07f*w) , 1.0f/(0.4f*h)    , 0.0f,      0.0f, 0.0f,
+    };
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(crosshairVertices), crosshairVertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     glDrawArrays(GL_TRIANGLES, 0, 12);
+
+    // draw currently selected blocktype
+    GUIShader.setBool("crosshair", false);
+
+    float m = 200;
+    Atlas a = this->atlas;
+    Blocktype b = placeableBlocks[player.getCurrentBlockIndex()];
+
+    float blocktypeVertices[] = {
+        -1.0f           , -1.0f + m*(1/h)   , 0.0f  , a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
+        -1.0f           , -1.0f             , 0.0f  , a.getU(b, Side)           ,  a.getV(b, Side)           ,
+        -1.0f + m*(1/w) , -1.0f             , 0.0f  , a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
+        -1.0f + m*(1/w) , -1.0f             , 0.0f  , a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
+        -1.0f + m*(1/w) , -1.0f + m*(1/h)   , 0.0f  , a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
+        -1.0f           , -1.0f + m*(1/h)   , 0.0f  , a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
+    };
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(blocktypeVertices), blocktypeVertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     
     glEnable(GL_DEPTH_TEST);
 }
