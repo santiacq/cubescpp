@@ -1,12 +1,16 @@
 #include "../lib/glad/include/glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
 #include <iostream>
 
 #include "block.hpp"
+#include "chunk.hpp"
 #include "render.hpp"
 #include "shader.hpp"
+
+#include "frustum.h"
 
 #define UP glm::vec3(0,1,0)
 
@@ -58,9 +62,15 @@ std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settin
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() + 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ() - 1));
     visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() - 1));*/
-    for (int x = -4; x <= 4; x++) {
-        for (int z = -4; z <= 4; z++) {
-            visibleChunks.push_back(world.getChunk(player.getChunkX() + x, player.getChunkZ() + z));
+    glm::mat4 m = this->projection * this->view;
+    Frustum frustum = Frustum(m);
+    
+    for (int x = -8; x <= 8; x++) {
+        for (int z = -8; z <= 8; z++) {
+            Chunk* chunk = world.getChunk(player.getChunkX() + x, player.getChunkZ() + z);
+            if (frustum.IsBoxVisible(glm::vec3{-0.5 + chunk->getChunkX()*16, 0, -0.5 + chunk->getChunkZ()*16}, glm::vec3{16.5 + chunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + chunk->getChunkZ()*16})) {
+                visibleChunks.push_back(chunk);
+            }
         }
     }
     return visibleChunks;
