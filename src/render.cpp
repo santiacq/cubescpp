@@ -182,7 +182,7 @@ void Render::renderGUI(Player player, Settings settings) {
 
 void Render::render(Player player, World &world, Settings settings) {
     // Clear color buffer and z buffer
-    glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
+    glClearColor(0.8f, 0.9f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // Update view matrix

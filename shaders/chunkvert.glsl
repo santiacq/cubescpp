@@ -10,7 +10,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 const float fogDensity = 0.012;
-const float fogGradient = 3.0;
+const float fogGradient = 4.0;
 
 void main() {
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
