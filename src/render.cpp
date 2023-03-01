@@ -10,7 +10,7 @@
 #include "render.hpp"
 #include "shader.hpp"
 
-#include "frustum.h"
+#include "../lib/frustum.h"
 
 #define UP glm::vec3(0,1,0)
 

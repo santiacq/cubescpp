@@ -20,22 +20,28 @@ void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
     }
 }
 
-Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ) {
-    float frequency = 0.2;
-    float amplitude = 4;
-    int surfaceY = 10 + sin((x + chunkX*CHUNK_SIZE)*frequency)*amplitude + sin((z + chunkZ*CHUNK_SIZE)*frequency)*amplitude;
+Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* world) {
+    
+    const double noise = world->perlin.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 4);
+    
+    //float frequency = 0.2;
+    //float amplitude = 4;
+    //int surfaceY = 10 + sin((x + chunkX*CHUNK_SIZE)*frequency)*amplitude + sin((z + chunkZ*CHUNK_SIZE)*frequency)*amplitude;
+    int surfaceY = noise * 20;
+    
+    
     if (y == surfaceY) {
         return Block(Grass);
     } else if (y < surfaceY) {
         return Block(Dirt);
-    } else if (y < 8) {
+    } else if (y < 12) {
          return Block(Water);
     } else { 
         return Block(Air);
     }
 }
 
-Chunk::Chunk(int chunkX, int chunkZ) {
+Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     this->chunkX = chunkX;
     this->chunkZ = chunkZ;
     this->mesh = NULL;
@@ -47,7 +53,7 @@ Chunk::Chunk(int chunkX, int chunkZ) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                blocks[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ);       
+                blocks[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);       
             }
         }
     }

@@ -3,7 +3,7 @@
 #include <utility>
 
 void World::updateChunk(int chunkX, int chunkZ) { // generate this chunk
-    Chunk* newChunk = new Chunk(chunkX, chunkZ);
+    Chunk* newChunk = new Chunk(chunkX, chunkZ, this);
     chunks.insert({std::make_pair(chunkX, chunkZ), newChunk});
 }
 

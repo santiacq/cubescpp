@@ -23,9 +23,9 @@ class Chunk {
         Chunk* neighborWest; // neighbor in the direction in which z decreases
         Chunk* neighborEast; // neighbor in the direction in which z increases
         void updateNeighbors(World &world);
-        Block generateBlock(int x, int y, int z, int chunkX, int chunkZ); // generate block that goes in that coordinates
+        Block generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* world); // generate block that goes in that coordinates
     public:
-        Chunk(int chunkX, int chunkZ);
+        Chunk(int chunkX, int chunkZ, World* world);
         int getChunkX();
         int getChunkZ();
         void updateMesh(Atlas a, World &world); // recalculate mesh and update mesh attribute
