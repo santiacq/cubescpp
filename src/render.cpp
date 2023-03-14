@@ -65,8 +65,8 @@ std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settin
     glm::mat4 m = this->projection * this->view;
     Frustum frustum = Frustum(m);
     
-    for (int x = -8; x <= 8; x++) {
-        for (int z = -8; z <= 8; z++) {
+    for (int x = -10; x <= 10; x++) {
+        for (int z = -10; z <= 10; z++) {
             Chunk* chunk = world.getChunk(player.getChunkX() + x, player.getChunkZ() + z);
             if (frustum.IsBoxVisible(glm::vec3{-0.5 + chunk->getChunkX()*16, 0, -0.5 + chunk->getChunkZ()*16}, glm::vec3{16.5 + chunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + chunk->getChunkZ()*16})) {
                 visibleChunks.push_back(chunk);
@@ -182,7 +182,7 @@ void Render::renderGUI(Player player, Settings settings) {
 
 void Render::render(Player player, World &world, Settings settings) {
     // Clear color buffer and z buffer
-    glClearColor(0.8f, 0.9f, 1.0f, 1.0f);
+    glClearColor(0.7f, 0.9f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // Update view matrix

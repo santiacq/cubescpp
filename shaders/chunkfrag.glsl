@@ -6,7 +6,7 @@ in float visibility;
 
 uniform sampler2D ourTexture;
 
-const vec3 fogColor = vec3(0.8, 0.9, 1.0);
+const vec3 fogColor = vec3(0.7, 0.9, 1.0);
 
 void main() {
     FragColor = texture(ourTexture, TexCoord);

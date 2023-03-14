@@ -22,7 +22,7 @@ void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
 
 Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* world) {
     
-    const double noise = world->perlin.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 4);
+    const double noise = world->perlin.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
     
     //float frequency = 0.2;
     //float amplitude = 4;
@@ -30,15 +30,19 @@ Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* w
     int surfaceY = noise * 20;
     
     
-    if (y == surfaceY) {
+    if (y == surfaceY + 2) {
         return Block(Grass);
     } else if (y < surfaceY) {
+        return Block(Stone);
+    } else if (y < surfaceY + 2) {
         return Block(Dirt);
     } else if (y < 12) {
          return Block(Water);
     } else { 
         return Block(Air);
     }
+
+    // add sand to the world
 }
 
 Chunk::Chunk(int chunkX, int chunkZ, World* world) {

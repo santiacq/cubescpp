@@ -5,7 +5,7 @@
 #include <glm/ext/vector_float3.hpp>
 #include <glm/vec3.hpp>
 
-#define PLAYER_SPEED (float) 2.5
+#define PLAYER_SPEED (float) 10
 // the range within which the player can break/place blocks
 #define PLAYER_BLOCK_RANGE 6
 
