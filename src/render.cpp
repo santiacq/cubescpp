@@ -50,18 +50,10 @@ void Render::updateProjectionMatrix(Settings settings) {
     chunkShader.setFloatMatrix4("projection", (float*) &projection);
 }
 
-// frustum culling / flood
+// frustum culling
 std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settings settings) {
     std::vector<Chunk*> visibleChunks;
-    /*visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ()));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ()));
-    visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ() + 1));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ()));
-    visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ() - 1));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ() + 1));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() + 1));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() + 1, player.getChunkZ() - 1));
-    visibleChunks.push_back(world.getChunk(player.getChunkX() - 1, player.getChunkZ() - 1));*/
+
     glm::mat4 m = this->projection * this->view;
     Frustum frustum = Frustum(m);
     
