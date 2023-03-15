@@ -53,11 +53,12 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     this->neighborEast = NULL;
 
     // world generation
+    Block tempBlocks1[CHUNK_SIZE][WORLD_HEIGHT][CHUNK_SIZE]; // temporary block array used for storage of intermadiate chunk generation
     // initial block generation
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                blocks[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);       
+                tempBlocks1[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);       
             }
         }
     }
@@ -65,17 +66,20 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
+                blocks[x][y][z] = tempBlocks1[x][y][z];
+
                 const bool sandNoise = world->sandNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3) > 0.5;
-                if (blocks[x][y][z].getType() != Air && blocks[x][y][z].getType() != Water && sandNoise) {
-                    if (x < CHUNK_SIZE - 1 && blocks[x + 1][y][z].getType() == Water)
+
+                if (tempBlocks1[x][y][z].getType() != Air && tempBlocks1[x][y][z].getType() != Water && sandNoise) {
+                    if (x < CHUNK_SIZE - 1 && tempBlocks1[x + 1][y][z].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
-                    if (x > 0 && blocks[x - 1][y][z].getType() == Water)
+                    else if (x > 0 && tempBlocks1[x - 1][y][z].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
-                    if (z < CHUNK_SIZE - 1 && blocks[x][y][z + 1].getType() == Water)
+                    else if (z < CHUNK_SIZE - 1 && tempBlocks1[x][y][z + 1].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
-                    if (z > 0 && blocks[x][y][z - 1].getType() == Water)
+                    else if (z > 0 && tempBlocks1[x][y][z - 1].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
-                    if (y > 0 && blocks[x][y - 1][z].getType() == Water)
+                    else if (y < WORLD_HEIGHT && tempBlocks1[x][y + 1][z].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
                 }
             }
