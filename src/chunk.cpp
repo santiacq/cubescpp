@@ -34,6 +34,7 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     // world generation
     Block tempBlocks1[CHUNK_SIZE][WORLD_HEIGHT][CHUNK_SIZE]; // temporary block array used for storage of intermadiate chunk generation
     Block tempBlocks2[CHUNK_SIZE][WORLD_HEIGHT][CHUNK_SIZE];
+    Block tempBlocks3[CHUNK_SIZE][WORLD_HEIGHT][CHUNK_SIZE];
     // initial block generation
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
@@ -84,8 +85,8 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                blocks[x][y][z] = tempBlocks2[x][y][z]; 
-                if (tempBlocks2[x][y][z].getType() == Water) {
+                tempBlocks3[x][y][z] = tempBlocks2[x][y][z]; 
+                if (tempBlocks2[x][y][z].getType() == Water || tempBlocks2[x][y][z].getType() == Grass) {
                     int sandNeighbors = 0;
                     if (x < CHUNK_SIZE - 1 && tempBlocks2[x + 1][y][z].getType() == Sand)
                         sandNeighbors++;
@@ -95,15 +96,47 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
                         sandNeighbors++;
                     if (z > 0 && tempBlocks2[x][y][z - 1].getType() == Sand)
                         sandNeighbors++;
-                    if (y < WORLD_HEIGHT && tempBlocks2[x][y + 1][z].getType() == Sand)
+                    if (y > 0 && tempBlocks2[x][y - 1][z].getType() == Sand)
                         sandNeighbors++;
-                    if (y < WORLD_HEIGHT && tempBlocks2[x + 1][y + 1][z].getType() == Sand)
+                    if (x < CHUNK_SIZE - 1 && z < CHUNK_SIZE - 1 && tempBlocks2[x + 1][y][z + 1].getType() == Sand)
                         sandNeighbors++;
-                    if (y < WORLD_HEIGHT && tempBlocks2[x - 1][y - 1][z].getType() == Sand)
+                    if (x > 0 && z > 0 && tempBlocks2[x - 1][y][z - 1].getType() == Sand)
                         sandNeighbors++;
-                    if (y < WORLD_HEIGHT && tempBlocks2[x + 1][y - 1][z].getType() == Sand)
+                    if (x < CHUNK_SIZE - 1 && z > 0 && tempBlocks2[x + 1][y][z - 1].getType() == Sand)
                         sandNeighbors++;
-                    if (y < WORLD_HEIGHT && tempBlocks2[x - 1][y + 1][z].getType() == Sand)
+                    if (x > 0 && z < CHUNK_SIZE - 1 && tempBlocks2[x - 1][y][z + 1].getType() == Sand)
+                        sandNeighbors++;
+                    
+                    if (sandNeighbors >= 3)
+                        tempBlocks3[x][y][z] = Block(Sand);
+                }
+            }
+        }
+    }
+    // add a layer of dirt above the water level
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+        for (int y = 0; y < WORLD_HEIGHT; y++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                blocks[x][y][z] = tempBlocks3[x][y][z]; 
+                if (tempBlocks2[x][y][z].getType() == Grass || tempBlocks3[x][y][z].getType() == Dirt) {
+                    int sandNeighbors = 0;
+                    if (x < CHUNK_SIZE - 1 && y > 0 && tempBlocks3[x + 1][y - 1][z].getType() == Sand)
+                        sandNeighbors++;
+                    if (x > 0 && y > 0 && tempBlocks3[x - 1][y - 1][z].getType() == Sand)
+                        sandNeighbors++;
+                    if (z < CHUNK_SIZE - 1 && y > 0 && tempBlocks3[x][y - 1][z + 1].getType() == Sand)
+                        sandNeighbors++;
+                    if (z > 0 && y > 0 && tempBlocks3[x][y - 1][z - 1].getType() == Sand)
+                        sandNeighbors++;
+                    if (y > 0 && y > 0 && tempBlocks3[x][y - 1][z].getType() == Sand)
+                        sandNeighbors++;
+                    if (x < CHUNK_SIZE - 1 && z < CHUNK_SIZE - 1 && y > 0 && tempBlocks3[x + 1][y - 1][z + 1].getType() == Sand)
+                        sandNeighbors++;
+                    if (x > 0 && z > 0 && y > 0 && tempBlocks3[x - 1][y - 1][z - 1].getType() == Sand)
+                        sandNeighbors++;
+                    if (x < CHUNK_SIZE - 1 && z > 0 && y > 0 && tempBlocks3[x + 1][y - 1][z - 1].getType() == Sand)
+                        sandNeighbors++;
+                    if (x > 0 && z < CHUNK_SIZE - 1 && y > 0 && tempBlocks3[x - 1][y - 1][z + 1].getType() == Sand)
                         sandNeighbors++;
                     
                     if (sandNeighbors >= 2)
