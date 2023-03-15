@@ -7,8 +7,8 @@
 
 class World {
     private:
-        const siv::PerlinNoise::seed_type terrainSeed = 43543534543345534u;
-        const siv::PerlinNoise::seed_type sandSeed = 124353456346533456u;
+        const siv::PerlinNoise::seed_type terrainSeed = 435435345433845534u;
+        const siv::PerlinNoise::seed_type sandSeed = 1243534586346533456u;
 
         std::map<std::pair<int, int>, Chunk*> chunks; // the key pair is chunkX and ChunkZ
         void updateChunk(int chunkX, int chunkZ); // generate this chunk
