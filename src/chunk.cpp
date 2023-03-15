@@ -23,12 +23,12 @@ void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
 
 Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* world) {
     
-    const double noise = world->perlin.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
+    const double terrainNoise = world->terrainNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
     
     //float frequency = 0.2;
     //float amplitude = 4;
     //int surfaceY = 10 + sin((x + chunkX*CHUNK_SIZE)*frequency)*amplitude + sin((z + chunkZ*CHUNK_SIZE)*frequency)*amplitude;
-    int surfaceY = noise * 20;
+    int surfaceY = terrainNoise * 20;
     
     if (y == surfaceY + 2) {
         return Block(Grass);
@@ -65,7 +65,8 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                if (blocks[x][y][z].getType() != Air && blocks[x][y][z].getType() != Water) {
+                const bool sandNoise = world->sandNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3) > 0.5;
+                if (blocks[x][y][z].getType() != Air && blocks[x][y][z].getType() != Water && sandNoise) {
                     if (x < CHUNK_SIZE - 1 && blocks[x + 1][y][z].getType() == Water)
                         blocks[x][y][z] = Block(Sand);
                     if (x > 0 && blocks[x - 1][y][z].getType() == Water)
