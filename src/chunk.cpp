@@ -1,4 +1,5 @@
 #include "chunk.hpp"
+#include "block.hpp"
 #include "mesh.hpp"
 #include <cstddef>
 #include <iostream>
@@ -29,7 +30,6 @@ Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* w
     //int surfaceY = 10 + sin((x + chunkX*CHUNK_SIZE)*frequency)*amplitude + sin((z + chunkZ*CHUNK_SIZE)*frequency)*amplitude;
     int surfaceY = noise * 20;
     
-    
     if (y == surfaceY + 2) {
         return Block(Grass);
     } else if (y < surfaceY) {
@@ -41,8 +41,6 @@ Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* w
     } else { 
         return Block(Air);
     }
-
-    // add sand to the world
 }
 
 Chunk::Chunk(int chunkX, int chunkZ, World* world) {
@@ -54,10 +52,31 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     this->neighborWest = NULL;
     this->neighborEast = NULL;
 
+    // world generation
+    // initial block generation
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 blocks[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);       
+            }
+        }
+    }
+    // add sand
+    for (int x = 0; x < CHUNK_SIZE; x++) {
+        for (int y = 0; y < WORLD_HEIGHT; y++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                if (blocks[x][y][z].getType() != Air && blocks[x][y][z].getType() != Water) {
+                    if (x < CHUNK_SIZE - 1 && blocks[x + 1][y][z].getType() == Water)
+                        blocks[x][y][z] = Block(Sand);
+                    if (x > 0 && blocks[x - 1][y][z].getType() == Water)
+                        blocks[x][y][z] = Block(Sand);
+                    if (z < CHUNK_SIZE - 1 && blocks[x][y][z + 1].getType() == Water)
+                        blocks[x][y][z] = Block(Sand);
+                    if (z > 0 && blocks[x][y][z - 1].getType() == Water)
+                        blocks[x][y][z] = Block(Sand);
+                    if (y > 0 && blocks[x][y - 1][z].getType() == Water)
+                        blocks[x][y][z] = Block(Sand);
+                }
             }
         }
     }
