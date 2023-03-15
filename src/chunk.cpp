@@ -21,26 +21,8 @@ void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
     }
 }
 
-Block Chunk::generateBlock(int x, int y, int z, int chunkX, int chunkZ, World* world) {
-    
-    const double terrainNoise = world->terrainNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
-
-    int surfaceY = terrainNoise * 20 + 5;
-    
-    if (y == surfaceY + 2) {
-        return Block(Grass);
-    } else if (y < surfaceY) {
-        return Block(Stone);
-    } else if (y < surfaceY + 2) {
-        return Block(Dirt);
-    } else if (y < 17) {
-         return Block(Water);
-    } else { 
-        return Block(Air);
-    }
-}
-
 Chunk::Chunk(int chunkX, int chunkZ, World* world) {
+    // setup
     this->chunkX = chunkX;
     this->chunkZ = chunkZ;
     this->mesh = NULL;
@@ -56,7 +38,22 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < WORLD_HEIGHT; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                tempBlocks1[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);       
+                //tempBlocks1[x][y][z] = generateBlock(x, y, z, chunkX, chunkZ, world);
+                Block firstGen = Block(Air);
+                const double terrainNoise = world->terrainNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
+
+                int surfaceY = terrainNoise * 20 + 5;
+                
+                if (y == surfaceY + 2) {
+                    firstGen = Block(Grass);
+                } else if (y < surfaceY) {
+                    firstGen = Block(Stone);
+                } else if (y < surfaceY + 2) {
+                    firstGen = Block(Dirt);
+                } else if (y < 17) {
+                    firstGen = Block(Water);
+                }
+                tempBlocks1[x][y][z] = firstGen;
             }
         }
     }
