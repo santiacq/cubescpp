@@ -76,8 +76,8 @@ void Render::renderWorld(Player player, World &world, Settings settings) {
 
     for (int i = 0; i < (int) visibleChunks.size(); i++) {
         // update chunk mesh, this should only be done if necesary (chunk updated)
-        if (visibleChunks[i]->getMesh() == NULL || visibleChunks[i]->isMeshOutdated) {
-            visibleChunks[i]->updateMesh(this->atlas, world);
+        if (visibleChunks[i]->getOpaqueMesh() == NULL || visibleChunks[i]->getTransparentMesh() == NULL || visibleChunks[i]->isMeshOutdated) {
+            visibleChunks[i]->updateMeshes(this->atlas, world);
         }
 
         // update model matrix (which moves each chunk)
@@ -93,11 +93,14 @@ void Render::renderWorld(Player player, World &world, Settings settings) {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        // pass the data to opengl
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getMesh()->getVertices(), GL_DYNAMIC_DRAW);
-        // draw the blocks
-        glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
+
+        // draw opaque mesh
+        glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getOpaqueMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getOpaqueMesh()->getVertices(), GL_DYNAMIC_DRAW);
+        glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getOpaqueMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
+        // draw transparent mesh
+        glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getTransparentMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getTransparentMesh()->getVertices(), GL_DYNAMIC_DRAW);
+        glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getTransparentMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
     }
 }
 
