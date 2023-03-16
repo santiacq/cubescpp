@@ -45,14 +45,19 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
                 const double terrainNoise = world->terrainNoise.octave2D_01(((x + CHUNK_SIZE * chunkX) * 0.05), ((z + CHUNK_SIZE * chunkZ) * 0.05), 3);
 
                 int surfaceY = terrainNoise * 20 + 5;
+                int waterLevel = 16;
                 
                 if (y == surfaceY + 2) {
-                    firstGen = Block(Grass);
+                    if (y >= waterLevel) {
+                        firstGen = Block(Grass);
+                    } else {
+                        firstGen = Block(Dirt);
+                    }
                 } else if (y < surfaceY) {
                     firstGen = Block(Stone);
                 } else if (y < surfaceY + 2) {
                     firstGen = Block(Dirt);
-                } else if (y < 17) {
+                } else if (y <= waterLevel) {
                     firstGen = Block(Water);
                 }
                 tempBlocks1[x][y][z] = firstGen;
