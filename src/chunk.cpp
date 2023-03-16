@@ -285,8 +285,8 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                         }
                     } else { // if the block is transparent (water) work with transparent mesh
 
-                        if ((z == 0 && (neighborWest->getBlock(x, y, CHUNK_SIZE - 1).getType() == Air || neighborWest->getBlock(x, y, CHUNK_SIZE - 1).getType() == Water)) 
-                        || (z != 0 && (blocks[x][y][z - 1].getType() == Air || blocks[x][y][z - 1].getType() == Water))) {
+                        if ((z == 0 && (neighborWest->getBlock(x, y, CHUNK_SIZE - 1).getType() == Air || neighborWest->getBlock(x, y, CHUNK_SIZE - 1).getType() != Water)) 
+                        || (z != 0 && (blocks[x][y][z - 1].getType() == Air || blocks[x][y][z - 1].getType() != Water))) {
                             float square1[] = {
                                 0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side) + a.getD(),
                                 0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side) + a.getD(), a.getV(b, Side)           ,
@@ -300,8 +300,8 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                             }
                             transparentTriangles += 2;
                         }
-                        if ((z == (CHUNK_SIZE - 1) && (neighborEast->getBlock(x, y, 0).getType() == Air || neighborEast->getBlock(x, y, 0).getType() == Water))
-                        || (z != (CHUNK_SIZE - 1) && (blocks[x][y][z + 1].getType() == Air || blocks[x][y][z + 1].getType() == Water))) {
+                        if ((z == (CHUNK_SIZE - 1) && (neighborEast->getBlock(x, y, 0).getType() == Air || neighborEast->getBlock(x, y, 0).getType() != Water))
+                        || (z != (CHUNK_SIZE - 1) && (blocks[x][y][z + 1].getType() == Air || blocks[x][y][z + 1].getType() != Water))) {
                             float square2[] = {
                                 -0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
                                 0.5f + x, 0.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side)           ,
@@ -315,8 +315,8 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                             }
                             transparentTriangles += 2;
                         }
-                        if ((x == 0 && (neighborSouth->getBlock(CHUNK_SIZE - 1, y, z).getType() == Air || neighborSouth->getBlock(CHUNK_SIZE - 1, y, z).getType() == Water))
-                        || (x != 0 && (blocks[x - 1][y][z].getType() == Air || blocks[x - 1][y][z].getType() == Water))) {
+                        if ((x == 0 && (neighborSouth->getBlock(CHUNK_SIZE - 1, y, z).getType() == Air || neighborSouth->getBlock(CHUNK_SIZE - 1, y, z).getType() != Water))
+                        || (x != 0 && (blocks[x - 1][y][z].getType() == Air || blocks[x - 1][y][z].getType() != Water))) {
                             float square3[] = {
                                 -0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Side) + a.getD(),  a.getV(b, Side) + a.getD(),
                                 -0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
@@ -330,8 +330,8 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                             }
                             transparentTriangles += 2;
                         }
-                        if ((x == (CHUNK_SIZE - 1) && (neighborNorth->getBlock(0, y, z).getType() == Air || neighborNorth->getBlock(0, y, z).getType() == Water))
-                        || (x != (CHUNK_SIZE - 1) && (blocks[x + 1][y][z].getType() == Air || blocks[x + 1][y][z].getType() == Water))) {
+                        if ((x == (CHUNK_SIZE - 1) && (neighborNorth->getBlock(0, y, z).getType() == Air || neighborNorth->getBlock(0, y, z).getType() != Water))
+                        || (x != (CHUNK_SIZE - 1) && (blocks[x + 1][y][z].getType() == Air || blocks[x + 1][y][z].getType() != Water))) {
                             float square4[] = {
                                 0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side)           ,
                                 0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Side)           ,  a.getV(b, Side) + a.getD(),
@@ -345,7 +345,7 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                             }
                             transparentTriangles += 2;
                         }
-                        if (y == 0 || (blocks[x][y - 1][z].getType() == Air || blocks[x][y - 1][z].getType() == Water)) {
+                        if (y == 0 || (blocks[x][y - 1][z].getType() == Air || blocks[x][y - 1][z].getType() != Water)) {
                             float square5[] = {
                                 -0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Bottom)            , a.getV(b, Bottom) + a.getD(),
                                 0.5f + x, 0.0f + y, -0.5f + z, a.getU(b, Bottom) + a.getD() , a.getV(b, Bottom) + a.getD(),
@@ -359,7 +359,7 @@ void Chunk::updateMeshes(Atlas a, World &world) { // recalculate meshes and upda
                             }
                             transparentTriangles += 2;
                         }
-                        if (y == (WORLD_HEIGHT - 1) || (blocks[x][y + 1][z].getType() == Air || blocks[x][y + 1][z].getType() == Water)) {
+                        if (y == (WORLD_HEIGHT - 1) || (blocks[x][y + 1][z].getType() == Air || blocks[x][y + 1][z].getType() != Water)) {
                             float square6[] = {
                                 0.5f + x, 1.0f + y, 0.5f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top)           ,
                                 0.5f + x, 1.0f + y, -0.5f + z, a.getU(b, Top) + a.getD(), a.getV(b, Top) + a.getD(),
