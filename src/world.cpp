@@ -7,7 +7,14 @@ void World::updateChunk(int chunkX, int chunkZ) { // generate this chunk
     chunks.insert({std::make_pair(chunkX, chunkZ), newChunk});
 }
 
-World::World() {}
+World::World() {
+    // pregenerate some of the world
+    for (int x = -20; x <= 20; x++) {
+        for (int z = -20; z <= 20; z++) {
+            updateChunk(x, z);
+        }
+    }
+}
 
 World::~World() {
     // free memory reserved while updating chunks
