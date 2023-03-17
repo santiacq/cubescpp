@@ -4,6 +4,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
 #include <iostream>
+#include <utility>
 
 #include "block.hpp"
 #include "chunk.hpp"
@@ -55,19 +56,50 @@ void Render::updateProjectionMatrix(Settings settings) {
 
 // frustum culling
 std::vector<Chunk*> Render::getVisibleChunks(Player player, World &world, Settings settings) {
+    // this could be optimized by only updating visibleChunks if the player is in a different chunk that when it was last updated
     std::vector<Chunk*> visibleChunks;
 
     glm::mat4 m = this->projection * this->view;
     Frustum frustum = Frustum(m);
     
-    for (int x = -10; x <= 10; x++) {
-        for (int z = -10; z <= 10; z++) {
-            Chunk* chunk = world.getChunk(player.getChunkX() + x, player.getChunkZ() + z);
-            if (frustum.IsBoxVisible(glm::vec3{-0.5 + chunk->getChunkX()*16, 0, -0.5 + chunk->getChunkZ()*16}, glm::vec3{16.5 + chunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + chunk->getChunkZ()*16})) {
-                visibleChunks.push_back(chunk);
+    // algorithm for pushing the chunks in order (closer to player first) the order is important for transparency when rendering
+    int radious = 15;
+    std::pair<int, int> newChunkCoords = std::pair<int, int>(player.getChunkX() + 1, player.getChunkZ());
+    visibleChunks.push_back(world.getChunk(player.getChunkX(), player.getChunkZ()));
+
+    for (int i = 2; i <= radious; i++) {
+        for (int j = 0; j < (i-1); j++) {
+            newChunkCoords = std::pair<int, int>(newChunkCoords.first - 1, newChunkCoords.second + 1);
+            Chunk* newChunk = world.getChunk(newChunkCoords.first, newChunkCoords.second);
+            if (frustum.IsBoxVisible(glm::vec3{-0.5 + newChunk->getChunkX()*16, 0, -0.5 + newChunk->getChunkZ()*16}, glm::vec3{16.5 + newChunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + newChunk->getChunkZ()*16})) {
+                visibleChunks.push_back(newChunk);
             }
         }
+        for (int j = 0; j < (i-1); j++) {
+            newChunkCoords = std::pair<int, int>(newChunkCoords.first - 1, newChunkCoords.second - 1);
+            Chunk* newChunk = world.getChunk(newChunkCoords.first, newChunkCoords.second);
+            if (frustum.IsBoxVisible(glm::vec3{-0.5 + newChunk->getChunkX()*16, 0, -0.5 + newChunk->getChunkZ()*16}, glm::vec3{16.5 + newChunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + newChunk->getChunkZ()*16})) {
+                visibleChunks.push_back(newChunk);
+            }
+        }
+        for (int j = 0; j < (i-1); j++) {
+            newChunkCoords = std::pair<int, int>(newChunkCoords.first + 1, newChunkCoords.second - 1);
+            Chunk* newChunk = world.getChunk(newChunkCoords.first, newChunkCoords.second);
+            if (frustum.IsBoxVisible(glm::vec3{-0.5 + newChunk->getChunkX()*16, 0, -0.5 + newChunk->getChunkZ()*16}, glm::vec3{16.5 + newChunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + newChunk->getChunkZ()*16})) {
+                visibleChunks.push_back(newChunk);
+            }
+        }
+        for (int j = 0; j < (i-1); j++) {
+            newChunkCoords = std::pair<int, int>(newChunkCoords.first + 1, newChunkCoords.second + 1);
+            Chunk* newChunk = world.getChunk(newChunkCoords.first, newChunkCoords.second);
+            if (frustum.IsBoxVisible(glm::vec3{-0.5 + newChunk->getChunkX()*16, 0, -0.5 + newChunk->getChunkZ()*16}, glm::vec3{16.5 + newChunk->getChunkX()*16, WORLD_HEIGHT, 16.5 + newChunk->getChunkZ()*16})) {
+                visibleChunks.push_back(newChunk);
+            }
+        }
+        newChunkCoords = std::pair<int, int>(newChunkCoords.first + 1, newChunkCoords.second);
     }
+
+    reverse(visibleChunks.begin(), visibleChunks.end());
     return visibleChunks;
 }
 
