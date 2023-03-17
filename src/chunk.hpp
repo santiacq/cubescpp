@@ -9,7 +9,7 @@
 #define CHUNK_SIZE 16
 #define CHUNK_BLOCKS CHUNK_SIZE*CHUNK_SIZE*WORLD_HEIGHT
 
-#define FLOATS_PER_TRIANGLE 15 // defined here because meshs are created here
+#define FLOATS_PER_TRIANGLE 18 // defined here because meshs are created here
 
 class World; // forward declaration
 
