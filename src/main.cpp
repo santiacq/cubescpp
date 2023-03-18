@@ -11,12 +11,11 @@ int main() {
     // setup
     Settings settings = Settings();
     Player player = Player();
-    World world = World();
+    World world = World(1);
     Window window = Window(settings, player, world); // create glfw window and configure callback functions
     Render render = Render(settings); // load openGL with glad and configure openGL
     Clock clock = Clock();
     
-
     // game loop
     // ---- ---- ----
     while (!window.shouldClose()) {

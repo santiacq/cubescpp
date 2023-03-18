@@ -154,8 +154,8 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
         }
     }
     // add trees
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    //std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(world->getSeed()); // Standard mersenne_twister_engine seeded
     std::uniform_int_distribution<> distrib(2, 13);
     
     int tries = 3;
