@@ -5,6 +5,8 @@
 #include <iostream>
 #include <math.h>
 #include "world.hpp"
+#include <random>
+#include <utility>
 
 void Chunk::updateBlock(int x, int y, int z, Block block, World* world) {
     this->blocks[x][y][z] = block;
@@ -149,6 +151,86 @@ Chunk::Chunk(int chunkX, int chunkZ, World* world) {
                         blocks[x][y][z] = Block(Sand);
                 }
             }
+        }
+    }
+    // add trees
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(2, 13);
+    
+    int tries = 3;
+    for (int trial = 0; trial < tries; trial++) {
+
+        int potentialX = distrib(gen);
+        int potentialY = 0;
+        int potentialZ = distrib(gen);
+
+        for (int y = 0; y < WORLD_HEIGHT; y++) {
+            if (blocks[potentialX][y][potentialZ].getType() == Grass) {
+                potentialY = y;
+                break;
+            }
+        }
+
+        if (blocks[potentialX + 1][potentialY][potentialZ].getType() == Grass &&
+            blocks[potentialX - 1][potentialY][potentialZ].getType() == Grass &&
+            blocks[potentialX][potentialY][potentialZ + 1].getType() == Grass &&
+            blocks[potentialX][potentialY][potentialZ - 1].getType() == Grass
+        ) {
+            blocks[potentialX][potentialY + 1][potentialZ] = Log;
+            blocks[potentialX][potentialY + 2][potentialZ] = Log;
+            blocks[potentialX][potentialY + 3][potentialZ] = Log;
+            blocks[potentialX + 1][potentialY + 3][potentialZ] = Leaves;
+            blocks[potentialX + 2][potentialY + 3][potentialZ] = Leaves;
+            blocks[potentialX - 1][potentialY + 3][potentialZ] = Leaves;
+            blocks[potentialX - 2][potentialY + 3][potentialZ] = Leaves;
+            blocks[potentialX][potentialY + 3][potentialZ + 1] = Leaves;
+            blocks[potentialX][potentialY + 3][potentialZ + 2] = Leaves;
+            blocks[potentialX][potentialY + 3][potentialZ - 1] = Leaves;
+            blocks[potentialX][potentialY + 3][potentialZ - 2] = Leaves;
+            blocks[potentialX + 1][potentialY + 3][potentialZ + 1] = Leaves;
+            blocks[potentialX + 2][potentialY + 3][potentialZ + 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 3][potentialZ + 2] = Leaves;
+            blocks[potentialX + 1][potentialY + 3][potentialZ - 1] = Leaves;
+            blocks[potentialX + 2][potentialY + 3][potentialZ - 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 3][potentialZ - 2] = Leaves;
+            blocks[potentialX - 1][potentialY + 3][potentialZ + 1] = Leaves;
+            blocks[potentialX - 2][potentialY + 3][potentialZ + 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 3][potentialZ + 2] = Leaves;
+            blocks[potentialX - 1][potentialY + 3][potentialZ - 1] = Leaves;
+            blocks[potentialX - 2][potentialY + 3][potentialZ - 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 3][potentialZ - 2] = Leaves;
+            blocks[potentialX][potentialY + 4][potentialZ] = Log;
+            blocks[potentialX + 1][potentialY + 4][potentialZ] = Leaves;
+            blocks[potentialX + 2][potentialY + 4][potentialZ] = Leaves;
+            blocks[potentialX - 1][potentialY + 4][potentialZ] = Leaves;
+            blocks[potentialX - 2][potentialY + 4][potentialZ] = Leaves;
+            blocks[potentialX][potentialY + 4][potentialZ + 1] = Leaves;
+            blocks[potentialX][potentialY + 4][potentialZ + 2] = Leaves;
+            blocks[potentialX][potentialY + 4][potentialZ - 1] = Leaves;
+            blocks[potentialX][potentialY + 4][potentialZ - 2] = Leaves;
+            blocks[potentialX + 1][potentialY + 4][potentialZ + 1] = Leaves;
+            blocks[potentialX + 2][potentialY + 4][potentialZ + 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 4][potentialZ + 2] = Leaves;
+            blocks[potentialX + 1][potentialY + 4][potentialZ - 1] = Leaves;
+            blocks[potentialX + 2][potentialY + 4][potentialZ - 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 4][potentialZ - 2] = Leaves;
+            blocks[potentialX - 1][potentialY + 4][potentialZ + 1] = Leaves;
+            blocks[potentialX - 2][potentialY + 4][potentialZ + 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 4][potentialZ + 2] = Leaves;
+            blocks[potentialX - 1][potentialY + 4][potentialZ - 1] = Leaves;
+            blocks[potentialX - 2][potentialY + 4][potentialZ - 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 4][potentialZ - 2] = Leaves;
+            blocks[potentialX + 1][potentialY + 5][potentialZ] = Leaves;
+            blocks[potentialX - 1][potentialY + 5][potentialZ] = Leaves;
+            blocks[potentialX][potentialY + 5][potentialZ + 1] = Leaves;
+            blocks[potentialX][potentialY + 5][potentialZ - 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 5][potentialZ + 1] = Leaves;
+            blocks[potentialX + 1][potentialY + 5][potentialZ - 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 5][potentialZ + 1] = Leaves;
+            blocks[potentialX - 1][potentialY + 5][potentialZ - 1] = Leaves;
+            blocks[potentialX][potentialY + 6][potentialZ] = Leaves;
+            break;
         }
     }
 
