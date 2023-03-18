@@ -136,9 +136,12 @@ void Render::renderWorld(Player player, World &world, Settings settings) {
         // draw opaque mesh
         glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getOpaqueMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getOpaqueMesh()->getVertices(), GL_DYNAMIC_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getOpaqueMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
+        
         // draw transparent mesh
+        glDisable(GL_CULL_FACE);
         glBufferData(GL_ARRAY_BUFFER, visibleChunks[i]->getTransparentMesh()->getTriangles() * FLOATS_PER_TRIANGLE * sizeof(float), visibleChunks[i]->getTransparentMesh()->getVertices(), GL_DYNAMIC_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, visibleChunks[i]->getTransparentMesh()->getTriangles() * FLOATS_PER_TRIANGLE / 3);
+        glEnable(GL_CULL_FACE);
     }
 }
 

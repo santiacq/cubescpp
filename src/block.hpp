@@ -11,11 +11,13 @@ enum Blocktype {
     Log,
     Leaves,
     Rocks,
-    Sand
+    Sand,
+    Glass
 };
 typedef enum Blocktype Blocktype;
 
-const Blocktype placeableBlocks[] {Grass, Dirt, Stone, Wood, Log, Leaves, Rocks, Sand};
+const Blocktype placeableBlocks[] {Grass, Dirt, Stone, Wood, Log, Leaves, Rocks, Sand, Water, Glass};
+const Blocktype transparentBlocks[] {Water, Leaves, Glass};
 
 class Block {
     private:
@@ -24,6 +26,7 @@ class Block {
         Block();
         Block(Blocktype type);
         Blocktype getType();
+        bool isTransparent();
 };
 
 #endif
